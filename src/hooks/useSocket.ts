@@ -1,21 +1,43 @@
+// hooks/useSocket.ts
 "use client";
 import { useEffect } from "react";
 import socket from "@/lib/socket";
 
-export const useSocket = (roomId: string, username: string) => {
+export const useSocket = (
+  roomId: string | undefined,
+  username: string | undefined
+) => {
+  const isHost =
+    typeof window !== "undefined" && localStorage.getItem("isHost") === "true";
+
   useEffect(() => {
     if (!roomId || !username) return;
-    socket.connect();
 
-    socket.emit("joinRoom", { roomId, username });
+    if (!socket.connected) socket.connect();
 
-    socket.on("connect", () => console.log("Connected:", socket.id));
-    socket.on("disconnect", () => console.log("Disconnected"));
+    if (!isHost) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      socket.emit("joinRoom", { roomId, username }, (res: any) => {
+        if (!res || !res.success)
+          console.error("Failed to join room:", res?.message);
+        else console.log("Joined room", roomId);
+      });
+    }
 
-    return () => {
+    // ❌ Don't disconnect on component unmount (causes auto leave)
+    // ✅ Only disconnect when the user closes tab/window
+    const handleBeforeUnload = () => {
       socket.disconnect();
     };
-  }, [roomId, username]);
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      // optionally leave room instead of disconnecting
+      // socket.emit("leaveRoom", { roomId, username });
+    };
+  }, [roomId, username, isHost]);
 
   return socket;
 };
