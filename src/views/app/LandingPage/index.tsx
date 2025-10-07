@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Users, Home, Globe } from "lucide-react";
 import Button from "@/components/Button/Button";
+import Tooltip from "@/components/Tooltip/Tooltip";
 import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 import socket from "@/lib/socket";
@@ -12,14 +13,12 @@ const GameLandingPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [isValid, setIsValid] = useState(false);
 
-  // ✅ Handle username input validation
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
     setUsername(value);
     setIsValid(value.length >= 4 && value.length <= 20);
   };
 
-  // ✅ Create Room
   const handleCreateRoom = () => {
     const roomId = nanoid(6);
     socket.connect();
@@ -29,16 +28,14 @@ const GameLandingPage: React.FC = () => {
     });
   };
 
-  // ✅ Join Room
   const handleJoinRoom = () => {
     const roomId = prompt("Enter Room ID:")?.trim();
     if (!roomId) return;
     router.push(`/game/${roomId}?username=${username}`);
   };
 
-  // ✅ Play Globally (future mode)
   const handlePlayGlobally = () => {
-    alert("Global play mode coming soon!");
+    console.log("Global mode coming soon!");
   };
 
   return (
@@ -50,9 +47,7 @@ const GameLandingPage: React.FC = () => {
         <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
       </div>
 
-      {/* Content */}
       <div className="relative z-10 w-full max-w-2xl">
-        {/* Title */}
         <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-5xl sm:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-4 tracking-tight">
             Game Arena
@@ -78,32 +73,53 @@ const GameLandingPage: React.FC = () => {
 
         {/* Buttons */}
         <div className="flex flex-col items-center gap-6 animate-slide-up">
-          <Button
-            onClick={handleJoinRoom}
-            variant="primary"
-            icon={<Users />}
-            disabled={!isValid}
-          >
-            Join Room
-          </Button>
+          <Tooltip message="Enter a username first!" disabled={isValid}>
+            <Button
+              onClick={handleJoinRoom}
+              variant="primary"
+              icon={<Users />}
+              disabled={!isValid}
+              className={`${
+                !isValid
+                  ? "opacity-50 cursor-not-allowed hover:opacity-50"
+                  : "opacity-100"
+              }`}
+            >
+              Join Room
+            </Button>
+          </Tooltip>
 
-          <Button
-            onClick={handleCreateRoom}
-            variant="secondary"
-            icon={<Home />}
-            disabled={!isValid}
-          >
-            Create Room
-          </Button>
+          <Tooltip message="Enter a username first!" disabled={isValid}>
+            <Button
+              onClick={handleCreateRoom}
+              variant="secondary"
+              icon={<Home />}
+              disabled={!isValid}
+              className={`${
+                !isValid
+                  ? "opacity-50 cursor-not-allowed hover:opacity-50"
+                  : "opacity-100"
+              }`}
+            >
+              Create Room
+            </Button>
+          </Tooltip>
 
-          <Button
-            onClick={handlePlayGlobally}
-            variant="accent"
-            icon={<Globe />}
-            disabled={!isValid}
-          >
-            Play Globally
-          </Button>
+          <Tooltip message="Enter a username first!" disabled={isValid}>
+            <Button
+              onClick={handlePlayGlobally}
+              variant="accent"
+              icon={<Globe />}
+              disabled={!isValid}
+              className={`${
+                !isValid
+                  ? "opacity-50 cursor-not-allowed hover:opacity-50"
+                  : "opacity-100"
+              }`}
+            >
+              Play Globally
+            </Button>
+          </Tooltip>
         </div>
 
         {/* Footer */}
