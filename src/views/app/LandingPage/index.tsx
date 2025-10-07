@@ -3,12 +3,15 @@
 import React from "react";
 import { Users, Home, Globe } from "lucide-react";
 import Button from "@/components/Button/Button";
+import { useRouter } from "next/navigation";
 
 // Main Landing Page Component
 const GameLandingPage: React.FC = () => {
+  const router = useRouter();
+
   const handleJoinRoom = () => {
     console.log("Join Room clicked");
-    // Add your navigation logic here
+    router.push("/game/:id");
   };
 
   const handleCreateRoom = () => {

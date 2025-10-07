@@ -4,4 +4,5 @@ export interface ButtonProps {
   variant?: "primary" | "secondary" | "accent";
   icon?: React.ReactNode;
   className?: string;
+  disabled?: boolean;
 }
