@@ -11,12 +11,23 @@ const GamePage: React.FC = () => {
   const params = useParams();
   const search = useSearchParams();
   const roomId = params?.roomId;
+  // const usernameFromQuery = search?.get("username") || undefined;
+  // const username =
+  //   (typeof window !== "undefined" &&
+  //     (localStorage.getItem("username") || usernameFromQuery)) ||
+  //   usernameFromQuery ||
+  //   "Guest";
+
   const usernameFromQuery = search?.get("username") || undefined;
-  const username =
-    (typeof window !== "undefined" &&
-      (localStorage.getItem("username") || usernameFromQuery)) ||
-    usernameFromQuery ||
-    "Guest";
+  const storedUsername =
+    typeof window !== "undefined" ? localStorage.getItem("username") : null;
+
+  const username = usernameFromQuery || storedUsername || "Guest";
+
+  // 💥 ensure localStorage updated to latest
+  useEffect(() => {
+    if (username) localStorage.setItem("username", username);
+  }, [username]);
 
   const socket = useSocket(roomId as string | undefined, username);
 
@@ -28,6 +39,14 @@ const GamePage: React.FC = () => {
   const [round, setRound] = useState<number>(1);
   const [isRiddler, setIsRiddler] = useState(false);
   const [secretWord, setSecretWord] = useState<string | null>(null);
+  const [riddlerName, setRiddlerName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (players.length === 1 && players[0]?.name === username) {
+      setIsRiddler(true);
+      setRiddlerName(username);
+    }
+  }, [players, username]);
 
   useEffect(() => {
     if (!socket) return;
@@ -46,6 +65,7 @@ const GamePage: React.FC = () => {
           isHost: p.isHost || false,
         }))
       );
+      setRiddlerName(info.riddler || null);
       if (info.role === "riddler") {
         setIsRiddler(true);
         if (info.word) setSecretWord(info.word);
@@ -103,19 +123,24 @@ const GamePage: React.FC = () => {
     const onNewRound = ({
       wordLength: wl,
       round: r,
+      riddler: newRiddler,
     }: {
       wordLength: number;
       round: number;
+      riddler: string;
     }) => {
       setWordLength(wl);
       setRound(r);
-      setSecretWord(null); // riddler will be sent new word via roomInfo
+      setRiddlerName(newRiddler);
+      setIsRiddler(username === newRiddler); // 🔥 fix
+      setSecretWord(null);
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
           player: "System",
-          text: `Round ${r} started`,
+          text: `Round ${r} started — ${newRiddler} is the riddler!`,
           isSystem: true,
           timestamp: new Date(),
         },
@@ -152,7 +177,7 @@ const GamePage: React.FC = () => {
       socket.off("newRound", onNewRound);
       socket.off("wrongGuess");
     };
-  }, [socket]);
+  }, [socket, username]);
 
   const handleGuessSubmit = () => {
     if (!guess.trim() || !roomId) return;
@@ -186,18 +211,33 @@ const GamePage: React.FC = () => {
         </div>
 
         {/* WORD DISPLAY */}
+        {/* WORD DISPLAY */}
         <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center mb-6">
           <p className="text-gray-400 text-sm mb-2">Guess the word</p>
-          <p className="text-4xl sm:text-5xl font-mono font-bold text-white tracking-widest">
-            {generateUnderscores(wordLength)}
-          </p>
-          <p className="text-gray-400 text-sm mt-2">{wordLength} letters</p>
 
-          {/* Show secret to riddler only */}
-          {isRiddler && secretWord && (
-            <div className="mt-3 text-sm text-green-300">
-              Secret word (you): <strong>{secretWord}</strong>
-            </div>
+          {/* Secret word visible only to riddler */}
+          {isRiddler && secretWord ? (
+            <>
+              <p className="text-4xl sm:text-5xl font-mono font-bold text-green-300 tracking-widest">
+                {secretWord.toUpperCase()}
+              </p>
+              <p className="text-gray-400 text-sm mt-2 italic">
+                You are the riddler this round — give hints in chat 😏
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-4xl sm:text-5xl font-mono font-bold text-white tracking-widest">
+                {generateUnderscores(wordLength)}
+              </p>
+              <p className="text-gray-400 text-sm mt-2">{wordLength} letters</p>
+              <p className="text-gray-400 text-sm mt-2">
+                Riddler:{" "}
+                <span className="text-purple-300 font-semibold">
+                  {riddlerName === username ? "You" : riddlerName || "??"}
+                </span>
+              </p>
+            </>
           )}
         </div>
 
@@ -276,25 +316,31 @@ const GamePage: React.FC = () => {
         </div>
 
         {/* GUESS INPUT */}
-        <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/20 rounded-xl p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              value={guess}
-              onChange={(e) => setGuess(e.target.value)}
-              placeholder="Type your guess..."
-              className="flex-1 bg-white/10 border border-white/20 rounded-lg px-6 py-4 text-white text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <Button
-              onClick={handleGuessSubmit}
-              variant="accent"
-              className="sm:w-auto w-full text-lg py-4"
-              disabled={!guess.trim()}
-            >
-              Submit Guess
-            </Button>
+        {!isRiddler ? (
+          <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/20 rounded-xl p-4">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                value={guess}
+                onChange={(e) => setGuess(e.target.value)}
+                placeholder="Type your guess..."
+                className="flex-1 bg-white/10 border border-white/20 rounded-lg px-6 py-4 text-white text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <Button
+                onClick={handleGuessSubmit}
+                variant="accent"
+                className="sm:w-auto w-full text-lg py-4"
+                disabled={!guess.trim()}
+              >
+                Submit Guess
+              </Button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center text-gray-400 italic">
+            You are the riddler this round. Give hints in the chat 😏
+          </div>
+        )}
       </div>
     </div>
   );

@@ -20,24 +20,23 @@ const GameLandingPage: React.FC = () => {
   };
 
   const handleCreateRoom = () => {
-    const username = (
-      localStorage.getItem("username") ||
-      prompt("Enter name") ||
-      "Host"
-    ).trim();
-    if (!username || username.length < 4) {
-      alert("username must be >=4 chars");
+    const name = username.trim();
+
+    if (!name || name.length < 4) {
+      alert("Username must be at least 4 characters.");
       return;
     }
-    localStorage.setItem("username", username);
+
+    localStorage.setItem("username", name);
+    localStorage.setItem("isHost", "true");
+
     const roomId = nanoid(6);
     if (!socket.connected) socket.connect();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    socket.emit("createRoom", { roomId, username }, (res: any) => {
+    socket.emit("createRoom", { roomId, username: name }, (res: any) => {
       if (res && res.success) {
-        localStorage.setItem("isHost", "true");
-        router.push(`/game/${roomId}?username=${encodeURIComponent(username)}`);
+        router.push(`/game/${roomId}?username=${encodeURIComponent(name)}`);
       } else {
         alert("Could not create room");
       }
