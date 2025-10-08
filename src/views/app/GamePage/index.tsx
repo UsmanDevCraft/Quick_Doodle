@@ -207,7 +207,7 @@ const GamePage: React.FC = () => {
         {/* WORD DISPLAY */}
         {/* WORD DISPLAY */}
         <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center mb-6">
-          {!isRiddler && (
+          {riddlerName && !isRiddler && (
             <p className="text-gray-400 text-sm mb-2">Guess the word</p>
           )}
 
