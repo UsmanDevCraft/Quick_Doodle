@@ -11,12 +11,6 @@ const GamePage: React.FC = () => {
   const params = useParams();
   const search = useSearchParams();
   const roomId = params?.roomId;
-  // const usernameFromQuery = search?.get("username") || undefined;
-  // const username =
-  //   (typeof window !== "undefined" &&
-  //     (localStorage.getItem("username") || usernameFromQuery)) ||
-  //   usernameFromQuery ||
-  //   "Guest";
 
   const usernameFromQuery = search?.get("username") || undefined;
   const storedUsername =
@@ -132,7 +126,7 @@ const GamePage: React.FC = () => {
       setWordLength(wl);
       setRound(r);
       setRiddlerName(newRiddler);
-      setIsRiddler(username === newRiddler); // 🔥 fix
+      setIsRiddler(username === newRiddler);
       setSecretWord(null);
 
       setMessages((prev) => [
@@ -213,7 +207,9 @@ const GamePage: React.FC = () => {
         {/* WORD DISPLAY */}
         {/* WORD DISPLAY */}
         <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center mb-6">
-          <p className="text-gray-400 text-sm mb-2">Guess the word</p>
+          {!isRiddler && (
+            <p className="text-gray-400 text-sm mb-2">Guess the word</p>
+          )}
 
           {/* Secret word visible only to riddler */}
           {isRiddler && secretWord ? (
@@ -222,7 +218,8 @@ const GamePage: React.FC = () => {
                 {secretWord.toUpperCase()}
               </p>
               <p className="text-gray-400 text-sm mt-2 italic">
-                You are the riddler this round — give hints in chat 😏
+                You are the <strong>riddler</strong> this round — give hints in
+                chat 😏
               </p>
             </>
           ) : (
@@ -244,7 +241,7 @@ const GamePage: React.FC = () => {
         {/* MAIN CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           {/* Players */}
-          <div className="lg:col-span-1 bg-white/10 rounded-xl border border-white/20 p-4 flex flex-col">
+          <div className="lg:col-span-1 bg-white/10 rounded-xl border border-white/20 p-4 flex flex-col max-h-[400px] overflow-auto">
             <div className="flex items-center gap-2 mb-3 border-b border-white/20 pb-2">
               <Users className="text-purple-400" size={20} />
               <h2 className="text-xl text-white font-semibold">
@@ -270,7 +267,7 @@ const GamePage: React.FC = () => {
           </div>
 
           {/* CHAT */}
-          <div className="lg:col-span-2 bg-white/10 rounded-xl border border-white/20 p-4 flex flex-col">
+          <div className="lg:col-span-2 bg-white/10 rounded-xl border border-white/20 p-4 flex flex-col max-h-[400px] overflow-auto">
             <div className="flex items-center gap-2 mb-3 border-b border-white/20 pb-2">
               <MessageCircle className="text-blue-400" size={20} />
               <h2 className="text-xl text-white font-semibold">Chat</h2>
@@ -287,7 +284,7 @@ const GamePage: React.FC = () => {
                 ) : (
                   <div key={m.id} className="bg-white/5 rounded-lg p-3">
                     <p className="text-purple-400 font-semibold text-sm mb-1">
-                      {m.player}
+                      {m.player === username ? "You" : m.player}{" "}
                     </p>
                     <p className="text-white">{m.text}</p>
                   </div>
