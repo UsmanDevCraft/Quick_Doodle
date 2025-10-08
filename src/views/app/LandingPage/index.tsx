@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Users, Home, Globe } from "lucide-react";
 import Button from "@/components/Button/Button";
 import Tooltip from "@/components/Tooltip/Tooltip";
+import Modal from "@/components/Modal/Modal";
 import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 import socket from "@/lib/socket";
@@ -12,6 +13,8 @@ const GameLandingPage: React.FC = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [roomId, setRoomId] = useState("");
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
@@ -44,9 +47,18 @@ const GameLandingPage: React.FC = () => {
   };
 
   const handleJoinRoom = () => {
-    const roomId = prompt("Enter Room ID:")?.trim();
-    if (!roomId) return;
-    router.push(`/game/${roomId}?username=${username}`);
+    if (!username) return;
+    setIsModalOpen(true);
+  };
+
+  const handleModalSubmit = () => {
+    const trimmedRoomId = roomId.trim();
+    if (!trimmedRoomId) {
+      alert("Please enter a room ID");
+      return;
+    }
+    setIsModalOpen(false);
+    router.push(`/game/${trimmedRoomId}?username=${username}`);
   };
 
   const handlePlayGlobally = () => {
@@ -142,6 +154,46 @@ const GameLandingPage: React.FC = () => {
           <p>Connect with players worldwide or create your own private room</p>
         </div>
       </div>
+
+      {/* Join Room Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Join Room"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Room ID
+            </label>
+            <input
+              type="text"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+              placeholder="Enter room code..."
+              className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              autoFocus
+              onKeyPress={(e) => {
+                if (e.key === "Enter") handleModalSubmit();
+              }}
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold bg-white/5 hover:bg-white/10 text-white transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleModalSubmit}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all"
+            >
+              Join
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       <style jsx>{`
         @keyframes fade-in {
