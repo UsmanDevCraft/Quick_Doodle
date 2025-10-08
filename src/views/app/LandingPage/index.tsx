@@ -5,6 +5,7 @@ import { Users, Home, Globe } from "lucide-react";
 import Button from "@/components/Button/Button";
 import Tooltip from "@/components/Tooltip/Tooltip";
 import Modal from "@/components/Modal/Modal";
+import Alert from "@/components/Alert/Alert";
 import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 import socket from "@/lib/socket";
@@ -16,6 +17,26 @@ const GameLandingPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
 
+  // Alert state
+  const [alert, setAlert] = useState<{
+    isOpen: boolean;
+    title?: string;
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }>({
+    isOpen: false,
+    message: "",
+    type: "info",
+  });
+
+  const showAlert = (
+    message: string,
+    type: "success" | "error" | "warning" | "info" = "info",
+    title?: string
+  ) => {
+    setAlert({ isOpen: true, message, type, title });
+  };
+
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
     setUsername(value);
@@ -26,7 +47,7 @@ const GameLandingPage: React.FC = () => {
     const name = username.trim();
 
     if (!name || name.length < 4) {
-      alert("Username must be at least 4 characters.");
+      showAlert("Username must be at least 4 characters.", "warning");
       return;
     }
 
@@ -41,7 +62,7 @@ const GameLandingPage: React.FC = () => {
       if (res && res.success) {
         router.push(`/game/${roomId}?username=${encodeURIComponent(name)}`);
       } else {
-        alert("Could not create room");
+        showAlert("Could not create room. Please try again.", "error");
       }
     });
   };
@@ -54,7 +75,7 @@ const GameLandingPage: React.FC = () => {
   const handleModalSubmit = () => {
     const trimmedRoomId = roomId.trim();
     if (!trimmedRoomId) {
-      alert("Please enter a room ID");
+      showAlert("Please enter a room ID", "warning");
       return;
     }
     setIsModalOpen(false);
@@ -62,7 +83,11 @@ const GameLandingPage: React.FC = () => {
   };
 
   const handlePlayGlobally = () => {
-    console.log("Global mode coming soon!");
+    showAlert(
+      "Global mode coming soon! Stay tuned for updates.",
+      "info",
+      "Coming Soon"
+    );
   };
 
   return (
@@ -194,6 +219,16 @@ const GameLandingPage: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Alert */}
+      <Alert
+        isOpen={alert.isOpen}
+        onClose={() => setAlert({ ...alert, isOpen: false })}
+        title={alert.title}
+        message={alert.message}
+        type={alert.type}
+        duration={0} // Set to 3000 for 3s auto-close
+      />
 
       <style jsx>{`
         @keyframes fade-in {
