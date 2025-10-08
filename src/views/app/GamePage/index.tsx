@@ -118,16 +118,23 @@ const GamePage: React.FC = () => {
       wordLength: wl,
       round: r,
       riddler: newRiddler,
+      word,
     }: {
       wordLength: number;
       round: number;
       riddler: string;
+      word?: string;
     }) => {
       setWordLength(wl);
       setRound(r);
       setRiddlerName(newRiddler);
       setIsRiddler(username === newRiddler);
-      setSecretWord(null);
+
+      if (word && username === newRiddler) {
+        setSecretWord(word);
+      } else {
+        setSecretWord(null);
+      }
 
       setMessages((prev) => [
         ...prev,
