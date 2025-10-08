@@ -1,4 +1,3 @@
-// hooks/useSocket.ts
 "use client";
 import { useEffect } from "react";
 import socket from "@/lib/socket";
@@ -10,6 +9,25 @@ export const useSocket = (
   const isHost =
     typeof window !== "undefined" && localStorage.getItem("isHost") === "true";
 
+  // ✅ Fix #1 — Ensure socket listeners are always ready before create/join
+  useEffect(() => {
+    if (!socket.connected) socket.connect();
+
+    // if the component unmounts or tab closes — disconnect cleanly
+    const handleBeforeUnload = () => {
+      socket.disconnect();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      socket.removeAllListeners(); // clear old listeners
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      // don't disconnect here — otherwise we lose connection on every re-render
+    };
+  }, []);
+
+  // ✅ Your main effect stays as is
   useEffect(() => {
     if (!roomId || !username) return;
 
@@ -24,19 +42,8 @@ export const useSocket = (
       });
     }
 
-    // ❌ Don't disconnect on component unmount (causes auto leave)
-    // ✅ Only disconnect when the user closes tab/window
-    const handleBeforeUnload = () => {
-      socket.disconnect();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      // optionally leave room instead of disconnecting
-      // socket.emit("leaveRoom", { roomId, username });
-    };
+    // optional cleanup (not disconnect)
+    return () => {};
   }, [roomId, username, isHost]);
 
   return socket;

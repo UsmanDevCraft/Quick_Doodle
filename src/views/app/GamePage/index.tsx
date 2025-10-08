@@ -313,7 +313,7 @@ const GamePage: React.FC = () => {
         </div>
 
         {/* GUESS INPUT */}
-        {!isRiddler ? (
+        {riddlerName && !isRiddler ? (
           <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/20 rounded-xl p-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <input
