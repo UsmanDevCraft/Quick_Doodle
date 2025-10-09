@@ -423,6 +423,7 @@ const GamePage: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title="Join Room"
+          isJoinRoom={true}
         >
           <div className="space-y-4">
             <div>
@@ -442,12 +443,6 @@ const GamePage: React.FC = () => {
               />
             </div>
             <div className="flex gap-3">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 px-4 py-3 rounded-lg font-semibold bg-white/5 hover:bg-white/10 text-white transition-all"
-              >
-                Cancel
-              </button>
               <button
                 onClick={handleModalSubmit}
                 className="flex-1 px-4 py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all"
