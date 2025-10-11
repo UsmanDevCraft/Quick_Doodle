@@ -9,8 +9,8 @@ export interface Message {
   id: string;
   player: string;
   text: string;
+  isSystem: boolean;
   timestamp: Date;
-  isSystem?: boolean;
 }
 
 export interface RoomInfo {

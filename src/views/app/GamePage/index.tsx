@@ -79,6 +79,13 @@ const GamePage: React.FC = () => {
     }
   }, [messages]);
 
+  // Fallback to re-request roomInfo if riddler and no secret word
+  useEffect(() => {
+    if (isRiddler && !secretWord && socket && roomId && username !== "Guest") {
+      socket.emit("requestRoomInfo", { roomId, username });
+    }
+  }, [isRiddler, secretWord, socket, roomId, username]);
+
   useEffect(() => {
     if (!socket) return;
 
@@ -134,7 +141,6 @@ const GamePage: React.FC = () => {
       setRiddlerName(data.riddler);
       setIsRiddler(username === data.riddler);
       setSecretWord(data.word && username === data.riddler ? data.word : null);
-      // No need to add system message here; backend sends it via 'message' event
     };
 
     socket.on("roomInfo", onRoomInfo);
