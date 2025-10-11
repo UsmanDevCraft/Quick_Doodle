@@ -3,47 +3,19 @@
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useSocket } from "@/hooks/useSocket";
-import { Player, Message } from "@/types/app/Game/game";
+import {
+  Player,
+  Message,
+  RoomInfo,
+  SocketMessage,
+  WinnerData,
+  NewRoundData,
+  JoinRoomResponse,
+} from "@/types/app/Game/game";
 import Button from "@/components/Button/Button";
 import { Send, Users, MessageCircle, Crown } from "lucide-react";
 import Modal from "@/components/Modal/Modal";
 import Alert from "@/components/Alert/Alert";
-
-// Define interfaces for socket event data
-interface RoomInfo {
-  roomId: string;
-  role: "riddler" | "guesser" | "player";
-  word?: string;
-  wordLength: number;
-  players: Player[];
-  round: number;
-  riddler: string;
-}
-
-interface SocketMessage {
-  id: string;
-  player: string;
-  text: string;
-  isSystem: boolean;
-  timestamp: number;
-}
-
-interface WinnerData {
-  username: string;
-  word: string;
-}
-
-interface NewRoundData {
-  wordLength: number;
-  round: number;
-  riddler: string;
-  word?: string;
-}
-
-interface JoinRoomResponse {
-  success: boolean;
-  message?: string;
-}
 
 const GamePage: React.FC = () => {
   const params = useParams();
