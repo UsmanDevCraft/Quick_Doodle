@@ -163,6 +163,20 @@ const GamePage: React.FC = () => {
     };
   }, [socket, roomId, username]);
 
+  useEffect(() => {
+    if (!socket) return;
+    const onConnect = () => {
+      if (roomId && username !== "Guest") {
+        // ask server for fresh roomInfo and to reattach us to the room group
+        socket.emit("requestRoomInfo", { roomId, username });
+      }
+    };
+    socket.on("connect", onConnect);
+    return () => {
+      socket.off("connect", onConnect);
+    };
+  }, [socket, roomId, username]);
+
   const handleGuessSubmit = () => {
     if (!guess.trim() || !roomId) return;
     socket.emit("guessWord", { roomId, username, guess });
