@@ -384,7 +384,7 @@ const GamePage: React.FC = () => {
       />
 
       {/* Join Room Modal */}
-      {isModalOpen && (
+      {isModalOpen && !storedUsername && (
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
