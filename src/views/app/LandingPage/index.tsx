@@ -15,6 +15,7 @@ const GameLandingPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
 
   // Alert state
@@ -43,7 +44,7 @@ const GameLandingPage: React.FC = () => {
     setIsValid(value.length >= 4 && value.length <= 20);
   };
 
-  const handleCreateRoom = () => {
+  const handleCreateModalSubmit = (mode: "private" | "global") => {
     const name = username.trim();
 
     if (!name || name.length < 4) {
@@ -58,13 +59,18 @@ const GameLandingPage: React.FC = () => {
     if (!socket.connected) socket.connect();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    socket.emit("createRoom", { roomId, username: name }, (res: any) => {
+    socket.emit("createRoom", { roomId, username: name, mode }, (res: any) => {
       if (res && res.success) {
         router.push(`/game/${roomId}?username=${encodeURIComponent(name)}`);
       } else {
         showAlert("Could not create room. Please try again.", "error");
       }
     });
+  };
+
+  const handleCreateRoom = () => {
+    if (!username) return;
+    setIsCreateModalOpen(true);
   };
 
   const handleJoinRoom = () => {
@@ -179,6 +185,49 @@ const GameLandingPage: React.FC = () => {
           <p>Connect with players worldwide or create your own private room</p>
         </div>
       </div>
+
+      {/* Create Room Modal */}
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        title="Create Room"
+      >
+        <div className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Choose Room Type
+            </label>
+            <p className="text-sm text-gray-400">
+              Select whether you want to create a{" "}
+              <span className="text-white font-semibold">Private</span> or{" "}
+              <span className="text-white font-semibold">Global</span> room.
+              <br />
+              <span className="text-gray-400">
+                • <span className="text-blue-400 font-medium">Global</span>{" "}
+                rooms are open — any player can join. <br />•{" "}
+                <span className="text-purple-400 font-medium">Private</span>{" "}
+                rooms are invite-only — share your room link to play with
+                friends.
+              </span>
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => handleCreateModalSubmit("private")}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold bg-white/5 hover:bg-white/10 text-white transition-all"
+            >
+              Private
+            </button>
+            <button
+              onClick={() => handleCreateModalSubmit("global")}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all"
+            >
+              Global
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Join Room Modal */}
       <Modal
