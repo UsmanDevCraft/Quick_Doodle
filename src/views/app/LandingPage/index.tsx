@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Users, Home, Globe } from "lucide-react";
 import Button from "@/components/Button/Button";
 import Tooltip from "@/components/Tooltip/Tooltip";
@@ -17,6 +17,7 @@ const GameLandingPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
+  const storedUsername = localStorage.getItem("username") || "";
 
   // Alert state
   const [alert, setAlert] = useState<{
@@ -37,6 +38,13 @@ const GameLandingPage: React.FC = () => {
   ) => {
     setAlert({ isOpen: true, message, type, title });
   };
+
+  useEffect(() => {
+    if (storedUsername) {
+      setUsername(storedUsername);
+      setIsValid(storedUsername.length >= 4 && storedUsername.length <= 20);
+    }
+  }, [storedUsername]);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
