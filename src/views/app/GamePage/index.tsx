@@ -16,11 +16,13 @@ import Button from "@/components/Button/Button";
 import { Send, Users, MessageCircle, Crown } from "lucide-react";
 import Modal from "@/components/Modal/Modal";
 import Alert from "@/components/Alert/Alert";
+import { useRouter } from "next/navigation";
 
 const GamePage: React.FC = () => {
   const params = useParams();
   const search = useSearchParams();
   const roomId = params?.roomId;
+  const router = useRouter();
 
   const usernameFromQuery = search?.get("username") || undefined;
   const storedUsername =
@@ -204,13 +206,23 @@ const GamePage: React.FC = () => {
     setUserName(trimmed);
 
     socket.emit(
-      "joinRoom",
-      { roomId, username: trimmed },
-      (res: JoinRoomResponse) => {
-        if (!res?.success) {
-          showAlert(res?.message || "Failed to join room", "error");
+      "checkRoom",
+      roomId,
+      (res: { exists: boolean; message: string }) => {
+        if (!res.exists) {
+          router.replace("/not-found");
         } else {
-          console.log("✅ Joined room successfully");
+          socket.emit(
+            "joinRoom",
+            { roomId, username: trimmed },
+            (res: JoinRoomResponse) => {
+              if (!res?.success) {
+                showAlert(res?.message || "Failed to join room", "error");
+              } else {
+                console.log("✅ Joined room successfully");
+              }
+            }
+          );
         }
       }
     );
