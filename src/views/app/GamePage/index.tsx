@@ -179,6 +179,35 @@ const GamePage: React.FC = () => {
     };
   }, [socket, roomId, username]);
 
+  useEffect(() => {
+    if (!socket || !roomId || !username || username === "Guest") return;
+
+    // 🧠 Only auto-join if username exists (modal won't open)
+    if (storedUsername) {
+      socket.emit(
+        "checkRoom",
+        roomId,
+        (res: { exists: boolean; message: string }) => {
+          if (!res.exists) {
+            router.replace("/not-found");
+          } else {
+            socket.emit(
+              "joinRoom",
+              { roomId, username },
+              (res: JoinRoomResponse) => {
+                if (!res?.success) {
+                  showAlert(res?.message || "Failed to join room", "error");
+                } else {
+                  console.log("✅ Auto joined room successfully");
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+  }, [socket, roomId, username, storedUsername, router]);
+
   const handleGuessSubmit = () => {
     if (!guess.trim() || !roomId) return;
     socket.emit("guessWord", { roomId, username, guess });
