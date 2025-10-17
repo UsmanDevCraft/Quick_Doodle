@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Home, ArrowLeft } from "lucide-react";
+import Button from "@/components/Button/Button";
 
 const NotFoundPage: React.FC = () => {
   const router = useRouter();
@@ -41,21 +42,21 @@ const NotFoundPage: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up-delayed">
-          <button
+          <Button
             onClick={handleGoHome}
             className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg shadow-purple-500/50"
           >
             <Home size={24} />
             <span>Go Home</span>
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={handleGoBack}
             className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white border border-white/20"
           >
             <ArrowLeft size={24} />
             <span>Go Back</span>
-          </button>
+          </Button>
         </div>
 
         <div className="mt-16 text-gray-400 text-sm animate-fade-in-delayed">
