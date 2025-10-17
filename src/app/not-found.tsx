@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Home, ArrowLeft } from "lucide-react";
 import Button from "@/components/Button/Button";
 
 const NotFoundPage: React.FC = () => {
   const router = useRouter();
+  const reason = useSearchParams().get("reason");
 
   const handleGoHome = () => {
     router.push("/");
@@ -33,11 +34,14 @@ const NotFoundPage: React.FC = () => {
 
         <div className="mb-12 animate-slide-up">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Oops! Page Not Found
+            {reason === "room_doesnot_exist"
+              ? "Oops! Room Does Not Exist"
+              : "Oops! Page Not Found"}
           </h2>
           <p className="text-gray-300 text-lg sm:text-xl font-light max-w-md mx-auto">
-            The page yo&apos;re looking for doesn&apos;t exist or has been
-            moved.
+            {reason === "room_doesnot_exist"
+              ? "The room you're trying to join doesn't exist. Please check the Room ID and try again."
+              : "The page you're looking for doesn't exist or has been moved."}
           </p>
         </div>
 

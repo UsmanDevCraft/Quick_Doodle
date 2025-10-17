@@ -192,7 +192,7 @@ const GamePage: React.FC = () => {
         roomId,
         (res: { exists: boolean; message: string }) => {
           if (!res.exists) {
-            router.replace("/not-found");
+            router.replace("/not-found?reason=room_doesnot_exist");
           } else {
             socket.emit(
               "joinRoom",
@@ -242,7 +242,7 @@ const GamePage: React.FC = () => {
       roomId,
       (res: { exists: boolean; message: string }) => {
         if (!res.exists) {
-          router.replace("/not-found");
+          router.replace("/not-found?reason=room_doesnot_exist");
         } else {
           socket.emit(
             "joinRoom",
