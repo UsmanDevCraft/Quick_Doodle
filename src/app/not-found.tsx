@@ -43,6 +43,7 @@ const NotFoundPage: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up-delayed">
           <Button
+            isOnlyClassName={true}
             onClick={handleGoHome}
             className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg shadow-purple-500/50"
           >
@@ -51,6 +52,7 @@ const NotFoundPage: React.FC = () => {
           </Button>
 
           <Button
+            isOnlyClassName={true}
             onClick={handleGoBack}
             className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white border border-white/20"
           >

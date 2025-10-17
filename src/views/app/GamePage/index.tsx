@@ -26,7 +26,10 @@ const GamePage: React.FC = () => {
   const storedUsername =
     typeof window !== "undefined" ? localStorage.getItem("username") : null;
   const isHost =
-    typeof window !== "undefined" ? localStorage.getItem("isHost") : null;
+    typeof window !== "undefined"
+      ? localStorage.getItem("isHost") === "true"
+      : false;
+
   const username = storedUsername || "Guest";
 
   // Ensure localStorage is updated with the latest username

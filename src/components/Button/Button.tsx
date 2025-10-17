@@ -21,13 +21,12 @@ const Button: React.FC<ButtonProps> = ({
       "bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 text-white shadow-lg shadow-orange-500/50",
   };
 
+  const combinedClassName = isOnlyClassName
+    ? className
+    : `${baseStyles} ${variants[variant]} ${className}`;
+
   return (
-    <button
-      onClick={onClick}
-      className={`${!isOnlyClassName && baseStyles} ${
-        !isOnlyClassName && variants[variant]
-      } ${className}`}
-    >
+    <button onClick={onClick} className={combinedClassName}>
       {icon && <span className="text-2xl">{icon}</span>}
       <span>{children}</span>
     </button>
