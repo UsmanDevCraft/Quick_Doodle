@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useSocket } from "@/hooks/useSocket";
 import {
@@ -20,15 +20,14 @@ import { useRouter } from "next/navigation";
 
 const GamePage: React.FC = () => {
   const params = useParams();
-  const search = useSearchParams();
   const roomId = params?.roomId;
   const router = useRouter();
 
-  const usernameFromQuery = search?.get("username") || undefined;
   const storedUsername =
     typeof window !== "undefined" ? localStorage.getItem("username") : null;
-
-  const username = usernameFromQuery || storedUsername || "Guest";
+  const isHost =
+    typeof window !== "undefined" ? localStorage.getItem("isHost") : null;
+  const username = storedUsername || "Guest";
 
   // Ensure localStorage is updated with the latest username
   useEffect(() => {
@@ -180,7 +179,8 @@ const GamePage: React.FC = () => {
   }, [socket, roomId, username]);
 
   useEffect(() => {
-    if (!socket || !roomId || !username || username === "Guest") return;
+    if (!socket || !roomId || !username || username === "Guest" || isHost)
+      return;
 
     // 🧠 Only auto-join if username exists (modal won't open)
     if (storedUsername) {
@@ -206,7 +206,7 @@ const GamePage: React.FC = () => {
         }
       );
     }
-  }, [socket, roomId, username, storedUsername, router]);
+  }, [socket, roomId, username, storedUsername, router, isHost]);
 
   const handleGuessSubmit = () => {
     if (!guess.trim() || !roomId) return;

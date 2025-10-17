@@ -70,7 +70,7 @@ const GameLandingPage: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.emit("createRoom", { roomId, username: name, mode }, (res: any) => {
       if (res && res.success) {
-        router.push(`/game/${roomId}?username=${encodeURIComponent(name)}`);
+        router.push(`/game/${roomId}`);
       } else {
         showAlert("Could not create room. Please try again.", "error");
       }
@@ -94,7 +94,7 @@ const GameLandingPage: React.FC = () => {
       return;
     }
     setIsModalOpen(false);
-    router.push(`/game/${trimmedRoomId}?username=${username}`);
+    router.push(`/game/${trimmedRoomId}`);
   };
 
   const handlePlayGlobally = () => {
