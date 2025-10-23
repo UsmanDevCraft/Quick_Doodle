@@ -103,6 +103,9 @@ const GameLandingPage: React.FC = () => {
     if (!socket.connected) socket.connect();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.emit("joinGlobalRoom", { username }, (res: any) => {
+      if (!storedUsername) {
+        localStorage.setItem("username", username);
+      }
       if (!res.success) {
         showAlert(res.message || "Failed to join global room.", "error");
       } else {
