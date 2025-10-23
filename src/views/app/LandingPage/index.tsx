@@ -98,11 +98,17 @@ const GameLandingPage: React.FC = () => {
   };
 
   const handlePlayGlobally = () => {
-    showAlert(
-      "Global mode coming soon! Stay tuned for updates.",
-      "info",
-      "Coming Soon"
-    );
+    if (!username) return;
+
+    if (!socket.connected) socket.connect();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    socket.emit("joinGlobalRoom", { username }, (res: any) => {
+      if (!res.success) {
+        showAlert(res.message || "Failed to join global room.", "error");
+      } else {
+        router.push(`/game/${res.roomId}`);
+      }
+    });
   };
 
   return (
