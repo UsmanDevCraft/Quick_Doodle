@@ -30,11 +30,11 @@ const GamePage: React.FC = () => {
       ? localStorage.getItem("isHost") === "true"
       : false;
 
-  const username = storedUsername || "Guest";
+  const username = storedUsername || "";
 
   // Ensure localStorage is updated with the latest username
   useEffect(() => {
-    if (username && username !== storedUsername && username !== "Guest") {
+    if (username && username !== storedUsername) {
       localStorage.setItem("username", username);
     }
   }, [username, storedUsername]);
