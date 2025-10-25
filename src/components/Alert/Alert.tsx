@@ -73,7 +73,7 @@ const Alert: React.FC<AlertProps> = ({
       />
 
       {/* Alert */}
-      <div className="relative w-full max-w-sm bg-gradient-to-br from-slate-800/95 to-purple-900/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl animate-scale-in overflow-hidden">
+      <div className="relative w-full max-w-sm bg-gradient-to-br from-slate-800/95 to-purple-900/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl animate-scale-in overflow-hidden p-4">
         {/* Animated background blob */}
         <div className="absolute inset-0 overflow-hidden">
           <div
@@ -84,13 +84,13 @@ const Alert: React.FC<AlertProps> = ({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white z-10"
+          className="absolute top-4 right-4 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white z-10 cursor-pointer p-1"
         >
           <X size={18} />
         </button>
 
         {/* Content */}
-        <div className="relative p-6">
+        <div className="relative pt-4">
           <div className="flex items-start gap-4">
             {/* Icon */}
             <div className={`flex-shrink-0 ${config.iconColor}`}>

@@ -158,7 +158,7 @@ const GameLandingPage: React.FC = () => {
               className={`${
                 !isValid
                   ? "opacity-50 cursor-not-allowed hover:opacity-50"
-                  : "opacity-100"
+                  : "opacity-100 cursor-pointer"
               }`}
             >
               Join Room
@@ -174,7 +174,7 @@ const GameLandingPage: React.FC = () => {
               className={`${
                 !isValid
                   ? "opacity-50 cursor-not-allowed hover:opacity-50"
-                  : "opacity-100"
+                  : "opacity-100 cursor-pointer"
               }`}
             >
               Create Room
@@ -190,7 +190,7 @@ const GameLandingPage: React.FC = () => {
               className={`${
                 !isValid
                   ? "opacity-50 cursor-not-allowed hover:opacity-50"
-                  : "opacity-100"
+                  : "opacity-100 cursor-pointer"
               }`}
             >
               Play Globally

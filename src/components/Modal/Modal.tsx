@@ -53,7 +53,7 @@ const Modal: React.FC<ModalProps> = ({
           {!isJoinRoom && (
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white cursor-pointer"
             >
               <X size={20} />
             </button>
