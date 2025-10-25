@@ -278,6 +278,10 @@ const GamePage: React.FC = () => {
     // socket.emit("kickPlayer", { roomId, playerId });
   };
 
+  const handleLeaveRoom = () => {
+    // socket.emit("kickPlayer", { roomId, playerId });
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 overflow-hidden relative">
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -361,11 +365,17 @@ const GamePage: React.FC = () => {
                   {selectedPlayer === p.id && (
                     <div className="absolute right-0 top-full bg-gray-900/95 border border-white/20 rounded-lg shadow-xl z-10 overflow-hidden">
                       <button
-                        onClick={() => handleKickPlayer(p.id)}
+                        onClick={
+                          p.name === storedUsername
+                            ? () => handleLeaveRoom()
+                            : () => handleKickPlayer(p.id)
+                        }
                         className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 transition-colors flex items-center gap-2"
                       >
                         <UserX size={16} />
-                        Kick Player
+                        {p.name === storedUsername
+                          ? "Leave Room"
+                          : "Kick Player"}
                       </button>
                     </div>
                   )}
