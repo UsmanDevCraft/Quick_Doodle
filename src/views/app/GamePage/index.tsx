@@ -13,7 +13,14 @@ import {
   JoinRoomResponse,
 } from "@/types/app/Game/game";
 import Button from "@/components/Button/Button";
-import { Send, Users, MessageCircle, Crown } from "lucide-react";
+import {
+  Send,
+  Users,
+  MessageCircle,
+  Crown,
+  UserX,
+  MoreVertical,
+} from "lucide-react";
 import Modal from "@/components/Modal/Modal";
 import Alert from "@/components/Alert/Alert";
 import { useRouter } from "next/navigation";
@@ -71,6 +78,7 @@ const GamePage: React.FC = () => {
   const [userName, setUserName] = useState(storedUsername || "");
   const [secretWord, setSecretWord] = useState<string | null>(null);
   const [riddlerName, setRiddlerName] = useState<string | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
   // Ref for auto-scrolling chat
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -265,6 +273,11 @@ const GamePage: React.FC = () => {
     return "_ ".repeat(len).trim();
   };
 
+  const handleKickPlayer = (playerId: string) => {
+    if (!playerId) return;
+    // socket.emit("kickPlayer", { roomId, playerId });
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 overflow-hidden relative">
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -324,7 +337,8 @@ const GamePage: React.FC = () => {
               {players.map((p) => (
                 <div
                   key={p.id}
-                  className="flex justify-between items-center bg-white/5 p-3 rounded-lg"
+                  className="flex justify-between items-center bg-white/5 p-3 rounded-lg group relative"
+                  onMouseLeave={() => setSelectedPlayer(null)}
                 >
                   <div className="flex gap-2 items-center">
                     {p.isHost && (
@@ -332,9 +346,29 @@ const GamePage: React.FC = () => {
                     )}
                     <span className="text-white font-medium">{p.name}</span>
                   </div>
-                  <span className="text-purple-400 font-semibold">
-                    {p.score || 0}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-400 font-semibold">
+                      {p.score || 0}
+                    </span>
+                    <button
+                      onClick={() => setSelectedPlayer(p.id)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded"
+                    >
+                      <MoreVertical className="text-white/70" size={18} />
+                    </button>
+                  </div>
+
+                  {selectedPlayer === p.id && (
+                    <div className="absolute right-0 top-full bg-gray-900/95 border border-white/20 rounded-lg shadow-xl z-10 overflow-hidden">
+                      <button
+                        onClick={() => handleKickPlayer(p.id)}
+                        className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 transition-colors flex items-center gap-2"
+                      >
+                        <UserX size={16} />
+                        Kick Player
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
