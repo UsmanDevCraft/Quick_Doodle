@@ -273,9 +273,16 @@ const GamePage: React.FC = () => {
     return "_ ".repeat(len).trim();
   };
 
-  const handleKickPlayer = (playerId: string) => {
-    if (!playerId) return;
-    // socket.emit("kickPlayer", { roomId, playerId });
+  const handleKickPlayer = (playerName: string) => {
+    if (!playerName) return;
+    socket.emit(
+      "voteKick",
+      { roomId, target: playerName, voter: userName },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (res: any) => {
+        if (!res.success) Alert(res.message);
+      }
+    );
   };
 
   const handleLeaveRoom = () => {
@@ -375,7 +382,7 @@ const GamePage: React.FC = () => {
                         onClick={
                           p.name === storedUsername
                             ? () => handleLeaveRoom()
-                            : () => handleKickPlayer(p.id)
+                            : () => handleKickPlayer(p.name)
                         }
                         className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 transition-colors flex items-center gap-2"
                       >
