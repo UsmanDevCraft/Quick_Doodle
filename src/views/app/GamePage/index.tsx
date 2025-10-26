@@ -279,7 +279,14 @@ const GamePage: React.FC = () => {
   };
 
   const handleLeaveRoom = () => {
-    // socket.emit("kickPlayer", { roomId, playerId });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    socket.emit("leaveRoom", { roomId, username }, (res: any) => {
+      if (res?.success) {
+        router.push("/");
+      } else {
+        console.error(res?.message || "Failed to leave room");
+      }
+    });
   };
 
   return (
