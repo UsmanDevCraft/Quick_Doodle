@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { AlertCircle, CheckCircle, XCircle, Info, X } from "lucide-react";
 import { AlertProps } from "@/types/app/Alert/alert";
+import { useRouter } from "next/navigation";
 
 const Alert: React.FC<AlertProps> = ({
   isOpen,
@@ -9,7 +10,10 @@ const Alert: React.FC<AlertProps> = ({
   message,
   type = "info",
   duration = 0,
+  isNavigate = false,
 }) => {
+  const router = useRouter();
+
   useEffect(() => {
     if (isOpen && duration > 0) {
       const timer = setTimeout(() => {
@@ -82,12 +86,14 @@ const Alert: React.FC<AlertProps> = ({
         </div>
 
         {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white z-10 cursor-pointer p-1"
-        >
-          <X size={18} />
-        </button>
+        {!isNavigate && (
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white z-10 cursor-pointer p-1"
+          >
+            <X size={18} />
+          </button>
+        )}
 
         {/* Content */}
         <div className="relative pt-4">
@@ -111,7 +117,7 @@ const Alert: React.FC<AlertProps> = ({
           {/* Action button */}
           <div className="mt-6">
             <button
-              onClick={onClose}
+              onClick={isNavigate ? () => router.replace("/") : onClose}
               className={`w-full px-4 py-3 rounded-lg font-semibold bg-gradient-to-r ${config.gradient} hover:opacity-90 text-white transition-all transform hover:scale-105 active:scale-95`}
             >
               Got it

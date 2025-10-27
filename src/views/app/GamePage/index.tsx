@@ -53,6 +53,7 @@ const GamePage: React.FC = () => {
     title?: string;
     message: string;
     type: "success" | "error" | "warning" | "info";
+    isNavigate?: boolean;
   }>({
     isOpen: false,
     message: "",
@@ -62,9 +63,10 @@ const GamePage: React.FC = () => {
   const showAlert = (
     message: string,
     type: "success" | "error" | "warning" | "info" = "info",
-    title?: string
+    title?: string,
+    isNavigate?: boolean
   ) => {
-    setAlert({ isOpen: true, message, type, title });
+    setAlert({ isOpen: true, message, type, title, isNavigate });
   };
 
   const [players, setPlayers] = useState<Player[]>([]);
@@ -207,7 +209,12 @@ const GamePage: React.FC = () => {
               { roomId, username },
               (res: JoinRoomResponse) => {
                 if (!res?.success) {
-                  showAlert(res?.message || "Failed to join room", "error");
+                  showAlert(
+                    res?.message || "Failed to join room",
+                    "error",
+                    undefined,
+                    true
+                  );
                 } else {
                   console.log("✅ Auto joined room successfully");
                 }
@@ -257,7 +264,12 @@ const GamePage: React.FC = () => {
             { roomId, username: trimmed },
             (res: JoinRoomResponse) => {
               if (!res?.success) {
-                showAlert(res?.message || "Failed to join room", "error");
+                showAlert(
+                  res?.message || "Failed to join room",
+                  "error",
+                  undefined,
+                  true
+                );
               } else {
                 console.log("✅ Joined room successfully");
               }
@@ -483,6 +495,7 @@ const GamePage: React.FC = () => {
         message={alert.message}
         type={alert.type}
         duration={0}
+        isNavigate={alert.isNavigate}
       />
 
       {/* Join Room Modal */}

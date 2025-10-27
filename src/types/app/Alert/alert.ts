@@ -5,4 +5,5 @@ export interface AlertProps {
   message: string;
   type?: "success" | "error" | "warning" | "info";
   duration?: number; // Auto-close duration in milliseconds (0 = no auto-close)
+  isNavigate?: boolean;
 }
