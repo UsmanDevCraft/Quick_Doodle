@@ -24,6 +24,7 @@ import {
 import Modal from "@/components/Modal/Modal";
 import Alert from "@/components/Alert/Alert";
 import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
 
 const GamePage: React.FC = () => {
   const params = useParams();
@@ -81,6 +82,7 @@ const GamePage: React.FC = () => {
   const [secretWord, setSecretWord] = useState<string | null>(null);
   const [riddlerName, setRiddlerName] = useState<string | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
 
   // Ref for auto-scrolling chat
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -368,7 +370,6 @@ const GamePage: React.FC = () => {
                 <div
                   key={p.id}
                   className="flex justify-between items-center bg-white/5 p-3 rounded-lg group relative"
-                  onMouseLeave={() => setSelectedPlayer(null)}
                 >
                   <div className="flex gap-2 items-center">
                     {p.isHost && (
@@ -381,30 +382,54 @@ const GamePage: React.FC = () => {
                       {p.score || 0}
                     </span>
                     <button
-                      onClick={() => setSelectedPlayer(p.id)}
+                      onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setMenuPosition({
+                          x: rect.right - 150,
+                          y: rect.bottom + 5,
+                        });
+                        setSelectedPlayer(p.id);
+                      }}
                       className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded"
                     >
                       <MoreVertical className="text-white/70" size={18} />
                     </button>
                   </div>
 
-                  {selectedPlayer === p.id && (
-                    <div className="absolute right-0 top-full bg-gray-900/95 border border-white/20 rounded-lg shadow-xl z-10 overflow-hidden">
-                      <button
-                        onClick={
-                          p.name === storedUsername
-                            ? () => handleLeaveRoom()
-                            : () => handleKickPlayer(p.name)
-                        }
-                        className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 transition-colors flex items-center gap-2"
+                  {selectedPlayer &&
+                    createPortal(
+                      <div
+                        style={{
+                          position: "fixed",
+                          top: `${menuPosition.y}px`,
+                          left: `${menuPosition.x}px`,
+                          zIndex: 9999,
+                        }}
+                        className="bg-gray-900/95 border border-white/20 rounded-lg shadow-xl overflow-hidden"
+                        onMouseLeave={() => setSelectedPlayer(null)}
                       >
-                        <UserX size={16} />
-                        {p.name === storedUsername
-                          ? "Leave Room"
-                          : "Kick Player"}
-                      </button>
-                    </div>
-                  )}
+                        <button
+                          onClick={() => {
+                            const p = players.find(
+                              (pl) => pl.id === selectedPlayer
+                            );
+                            if (!p) return;
+                            p.name === storedUsername
+                              ? handleLeaveRoom()
+                              : handleKickPlayer(p.name);
+                            setSelectedPlayer(null);
+                          }}
+                          className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 transition-colors flex items-center gap-2"
+                        >
+                          <UserX size={16} />
+                          {players.find((pl) => pl.id === selectedPlayer)
+                            ?.name === storedUsername
+                            ? "Leave Room"
+                            : "Kick Player"}
+                        </button>
+                      </div>,
+                      document.body
+                    )}
                 </div>
               ))}
             </div>
