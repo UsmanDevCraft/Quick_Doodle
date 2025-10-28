@@ -87,6 +87,8 @@ const GamePage: React.FC = () => {
   // Ref for auto-scrolling chat
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const listenersAttached = useRef(false);
+
   // Auto-scroll to bottom when messages update
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -95,17 +97,14 @@ const GamePage: React.FC = () => {
     }
   }, [messages]);
 
-  // Fallback to re-request roomInfo if riddler and no secret word
+  // === MAIN SOCKET LISTENERS (ATTACHED ONLY ONCE) ===
   useEffect(() => {
-    if (isRiddler && !secretWord && socket && roomId && username !== "Guest") {
-      socket.emit("requestRoomInfo", { roomId, username });
-    }
-  }, [isRiddler, secretWord, socket, roomId, username]);
+    if (!socket || !roomId || !username || username === "Guest") return;
 
-  useEffect(() => {
-    if (!socket) return;
+    // Prevent duplicate listeners
+    if (listenersAttached.current) return;
+    listenersAttached.current = true;
 
-    // Initial roomInfo (emitted by server upon create/join)
     const onRoomInfo = (info: RoomInfo) => {
       setWordLength(info.wordLength || 0);
       setRound(info.round || 1);
@@ -134,21 +133,26 @@ const GamePage: React.FC = () => {
     };
 
     const onMessage = (msg: SocketMessage) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: msg.id || Date.now().toString(),
-          player: msg.player,
-          text: msg.text,
-          isSystem: msg.isSystem || false,
-          timestamp: new Date(msg.timestamp || Date.now()),
-        },
-      ]);
+      setMessages((prev) => {
+        // Deduplicate by message ID
+        if (msg.id && prev.some((m) => m.id === msg.id)) return prev;
+
+        return [
+          ...prev,
+          {
+            id: msg.id || Date.now().toString(),
+            player: msg.player,
+            text: msg.text,
+            isSystem: msg.isSystem || false,
+            timestamp: new Date(msg.timestamp || Date.now()),
+          },
+        ];
+      });
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onWinner = (_data: WinnerData) => {
-      // No need to add system message here; backend sends it via 'message' event
+    const onWinner = (data: WinnerData) => {
+      console.log("Winner announced:", data);
+      // Handled via system message
     };
 
     const onNewRound = (data: NewRoundData) => {
@@ -159,18 +163,19 @@ const GamePage: React.FC = () => {
       setSecretWord(data.word && username === data.riddler ? data.word : null);
     };
 
+    // Attach all listeners
     socket.on("roomInfo", onRoomInfo);
     socket.on("updatePlayers", onUpdatePlayers);
     socket.on("message", onMessage);
     socket.on("winner", onWinner);
     socket.on("newRound", onNewRound);
 
-    // Request room info on connect to ensure latest state
-    if (roomId && username !== "Guest") {
-      socket.emit("requestRoomInfo", { roomId, username });
-    }
+    // Request room info once
+    socket.emit("requestRoomInfo", { roomId, username });
 
+    // Cleanup on unmount
     return () => {
+      listenersAttached.current = false;
       socket.off("roomInfo", onRoomInfo);
       socket.off("updatePlayers", onUpdatePlayers);
       socket.off("message", onMessage);
@@ -179,25 +184,27 @@ const GamePage: React.FC = () => {
     };
   }, [socket, roomId, username]);
 
+  // === RECONNECT HANDLER (ONLY ON CONNECT) ===
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !roomId || !username || username === "Guest") return;
+
     const onConnect = () => {
-      if (roomId && username !== "Guest") {
-        // ask server for fresh roomInfo and to reattach us to the room group
-        socket.emit("requestRoomInfo", { roomId, username });
-      }
+      console.log("Reconnected, requesting room info...");
+      socket.emit("requestRoomInfo", { roomId, username });
     };
+
     socket.on("connect", onConnect);
+
     return () => {
       socket.off("connect", onConnect);
     };
   }, [socket, roomId, username]);
 
+  // === AUTO-JOIN FOR NON-HOST (ONLY IF USERNAME EXISTS) ===
   useEffect(() => {
     if (!socket || !roomId || !username || username === "Guest" || isHost)
       return;
 
-    // 🧠 Only auto-join if username exists (modal won't open)
     if (storedUsername) {
       socket.emit(
         "checkRoom",
@@ -218,7 +225,7 @@ const GamePage: React.FC = () => {
                     true
                   );
                 } else {
-                  console.log("✅ Auto joined room successfully");
+                  console.log("Auto joined room successfully");
                 }
               }
             );
@@ -273,7 +280,7 @@ const GamePage: React.FC = () => {
                   true
                 );
               } else {
-                console.log("✅ Joined room successfully");
+                console.log("Joined room successfully");
               }
             }
           );
@@ -336,7 +343,7 @@ const GamePage: React.FC = () => {
               </p>
               <p className="text-gray-400 text-sm mt-2 italic">
                 You are the <strong>riddler</strong> this round — give hints in
-                chat 😏
+                chat
               </p>
             </>
           ) : (
@@ -507,7 +514,7 @@ const GamePage: React.FC = () => {
           </div>
         ) : (
           <div className="text-center text-gray-400 italic">
-            You are the riddler this round. Give hints in the chat 😏
+            You are the riddler this round. Give hints in the chat
           </div>
         )}
       </div>

@@ -40,8 +40,6 @@ export const useSocket = (
           console.error("Failed to join room:", res?.message);
         else console.log("Joined room", roomId);
       });
-    } else {
-      socket.emit("requestRoomInfo", { roomId, username: name });
     }
 
     // optional cleanup (not disconnect)
