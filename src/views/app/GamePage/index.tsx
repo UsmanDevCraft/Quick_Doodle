@@ -13,18 +13,11 @@ import {
   JoinRoomResponse,
 } from "@/types/app/Game/game";
 import Button from "@/components/Button/Button";
-import {
-  Send,
-  Users,
-  MessageCircle,
-  Crown,
-  UserX,
-  MoreVertical,
-} from "lucide-react";
+import { Send, MessageCircle } from "lucide-react";
 import Modal from "@/components/Modal/Modal";
 import Alert from "@/components/Alert/Alert";
 import { useRouter } from "next/navigation";
-import { createPortal } from "react-dom";
+import PlayerList from "@/components/gamePage/playerList/PlayerList";
 
 const GamePage: React.FC = () => {
   const params = useParams();
@@ -365,82 +358,17 @@ const GamePage: React.FC = () => {
         {/* MAIN CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           {/* Players */}
-          <div className="lg:col-span-1 bg-white/10 rounded-xl border border-white/20 p-4 flex flex-col max-h-[400px] overflow-auto">
-            <div className="flex items-center gap-2 mb-3 border-b border-white/20 pb-2">
-              <Users className="text-purple-400" size={20} />
-              <h2 className="text-xl text-white font-semibold">
-                Players ({players.length})
-              </h2>
-            </div>
-            <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin">
-              {players.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex justify-between items-center bg-white/5 p-3 rounded-lg group relative"
-                >
-                  <div className="flex gap-2 items-center">
-                    {p.isHost && (
-                      <Crown className="text-yellow-400" size={16} />
-                    )}
-                    <span className="text-white font-medium">{p.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-purple-400 font-semibold">
-                      {p.score || 0}
-                    </span>
-                    <button
-                      onClick={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        setMenuPosition({
-                          x: rect.right - 150,
-                          y: rect.bottom + 5,
-                        });
-                        setSelectedPlayer(p.id);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded"
-                    >
-                      <MoreVertical className="text-white/70" size={18} />
-                    </button>
-                  </div>
-
-                  {selectedPlayer &&
-                    createPortal(
-                      <div
-                        style={{
-                          position: "fixed",
-                          top: `${menuPosition.y}px`,
-                          left: `${menuPosition.x}px`,
-                          zIndex: 9999,
-                        }}
-                        className="bg-gray-900/95 border border-white/20 rounded-lg shadow-xl overflow-hidden"
-                        onMouseLeave={() => setSelectedPlayer(null)}
-                      >
-                        <button
-                          onClick={() => {
-                            const p = players.find(
-                              (pl) => pl.id === selectedPlayer
-                            );
-                            if (!p) return;
-                            p.name === storedUsername
-                              ? handleLeaveRoom()
-                              : handleKickPlayer(p.name);
-                            setSelectedPlayer(null);
-                          }}
-                          className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 transition-colors flex items-center gap-2"
-                        >
-                          <UserX size={16} />
-                          {players.find((pl) => pl.id === selectedPlayer)
-                            ?.name === storedUsername
-                            ? "Leave Room"
-                            : "Kick Player"}
-                        </button>
-                      </div>,
-                      document.body
-                    )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <PlayerList
+            players={players}
+            username={username}
+            isHost={isHost}
+            selectedPlayer={selectedPlayer}
+            setSelectedPlayer={setSelectedPlayer}
+            menuPosition={menuPosition}
+            setMenuPosition={setMenuPosition}
+            handleKickPlayer={handleKickPlayer}
+            handleLeaveRoom={handleLeaveRoom}
+          />
 
           {/* CHAT */}
           <div className="lg:col-span-2 bg-white/10 rounded-xl border border-white/20 p-4 flex flex-col max-h-[400px] overflow-auto">
