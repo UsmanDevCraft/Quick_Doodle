@@ -16,7 +16,7 @@ const GameLandingPage: React.FC = () => {
   const storedUsername =
     typeof window !== "undefined" ? localStorage.getItem("username") || "" : "";
   const [username, setUsername] = useState(storedUsername);
-  const [isValid, setIsValid] = useState(false);
+  const [isValid, setIsValid] = useState(storedUsername.length >= 4);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [roomId, setRoomId] = useState("");

@@ -208,7 +208,7 @@ const GamePage: React.FC = () => {
     if (storedUsername) {
       socket.emit(
         "checkRoom",
-        roomId,
+        { roomId, username },
         (res: { exists: boolean; message: string }) => {
           if (!res.exists) {
             router.replace("/not-found?reason=room_doesnot_exist");
@@ -263,7 +263,7 @@ const GamePage: React.FC = () => {
 
     socket.emit(
       "checkRoom",
-      roomId,
+      { roomId, username: trimmed },
       (res: { exists: boolean; message: string }) => {
         if (!res.exists) {
           router.replace("/not-found?reason=room_doesnot_exist");
