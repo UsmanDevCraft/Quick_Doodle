@@ -1,20 +1,7 @@
-// components/gamePage/playerList/PlayerList.tsx
 import React from "react";
 import { Users, Crown, MoreVertical, UserX } from "lucide-react";
 import { createPortal } from "react-dom";
-import { Player } from "@/types/app/Game/game";
-
-interface PlayerListProps {
-  players: Player[];
-  username: string;
-  isHost: boolean;
-  selectedPlayer: string | null;
-  setSelectedPlayer: (id: string | null) => void;
-  menuPosition: { x: number; y: number };
-  setMenuPosition: (pos: { x: number; y: number }) => void;
-  handleKickPlayer: (playerName: string) => void;
-  handleLeaveRoom: () => void;
-}
+import { PlayerListProps } from "@/types/app/Game/game";
 
 const PlayerList: React.FC<PlayerListProps> = ({
   players,

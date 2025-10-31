@@ -1,15 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { MessageCircle, Send } from "lucide-react";
 import Button from "@/components/Button/Button";
-import { Message } from "@/types/app/Game/game";
-
-interface ChatBoxProps {
-  messages: Message[];
-  chatMessage: string;
-  setChatMessage: (msg: string) => void;
-  username: string;
-  handleChatSubmit: () => void;
-}
+import { ChatBoxProps } from "@/types/app/Game/game";
 
 const ChatBox: React.FC<ChatBoxProps> = ({
   messages,
@@ -18,7 +10,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   username,
   handleChatSubmit,
 }) => {
-  // Auto‑scroll to the bottom whenever new messages arrive
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

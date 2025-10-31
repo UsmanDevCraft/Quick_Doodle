@@ -47,3 +47,23 @@ export interface JoinRoomResponse {
   success: boolean;
   message?: string;
 }
+
+export interface ChatBoxProps {
+  messages: Message[];
+  chatMessage: string;
+  setChatMessage: (msg: string) => void;
+  username: string;
+  handleChatSubmit: () => void;
+}
+
+export interface PlayerListProps {
+  players: Player[];
+  username: string;
+  isHost: boolean;
+  selectedPlayer: string | null;
+  setSelectedPlayer: (id: string | null) => void;
+  menuPosition: { x: number; y: number };
+  setMenuPosition: (pos: { x: number; y: number }) => void;
+  handleKickPlayer: (playerName: string) => void;
+  handleLeaveRoom: () => void;
+}
