@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import PlayerList from "@/components/gamePage/playerList/PlayerList";
 import ChatBox from "@/components/gamePage/chatBox/ChatBox";
 import Toggle from "@/components/Toggle/Toggle";
+import DrawBoard from "@/components/gamePage/drawBoard/DrawBoard";
 
 const GamePage: React.FC = () => {
   const params = useParams();
@@ -77,6 +78,7 @@ const GamePage: React.FC = () => {
   const [riddlerName, setRiddlerName] = useState<string | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [toggleMode, setToggleMode] = useState<"riddle" | "draw">("riddle");
 
   // Ref for auto-scrolling chat
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -357,7 +359,12 @@ const GamePage: React.FC = () => {
         </div>
 
         {/* GAME CONTENT */}
-        {isRiddler && <Toggle />}
+        {isRiddler && (
+          <Toggle toggleMode={toggleMode} setToggleMode={setToggleMode} />
+        )}
+        <div className="py-4">
+          {toggleMode === "draw" ? <DrawBoard /> : null}
+        </div>
 
         {/* MAIN CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
