@@ -18,6 +18,7 @@ import Alert from "@/components/Alert/Alert";
 import { useRouter } from "next/navigation";
 import PlayerList from "@/components/gamePage/playerList/PlayerList";
 import ChatBox from "@/components/gamePage/chatBox/ChatBox";
+import Toggle from "@/components/Toggle/Toggle";
 
 const GamePage: React.FC = () => {
   const params = useParams();
@@ -324,7 +325,7 @@ const GamePage: React.FC = () => {
         </div>
 
         {/* WORD DISPLAY */}
-        <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center mb-6">
+        <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center">
           {riddlerName && !isRiddler && (
             <p className="text-gray-400 text-sm mb-2">Guess the word</p>
           )}
@@ -354,6 +355,9 @@ const GamePage: React.FC = () => {
             </>
           )}
         </div>
+
+        {/* GAME CONTENT */}
+        {isRiddler && <Toggle />}
 
         {/* MAIN CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
