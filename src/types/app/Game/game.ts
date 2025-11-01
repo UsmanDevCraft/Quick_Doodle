@@ -67,3 +67,24 @@ export interface PlayerListProps {
   handleKickPlayer: (playerName: string) => void;
   handleLeaveRoom: () => void;
 }
+
+export type Point = { x: number; y: number };
+export type Stroke = {
+  id: string;
+  color: string;
+  width: number;
+  mode: "draw" | "erase";
+  points: Point[];
+};
+
+export type DrawBoardProps = {
+  width?: number | "100%";
+  height?: number;
+  initialTheme?: "light" | "dark";
+  penWidth?: number;
+  eraserWidth?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  socket?: any;
+  socketEventName?: string;
+  roomId?: string;
+};

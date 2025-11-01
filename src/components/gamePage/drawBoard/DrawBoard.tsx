@@ -1,25 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-
-export type Point = { x: number; y: number };
-export type Stroke = {
-  id: string;
-  color: string;
-  width: number;
-  mode: "draw" | "erase";
-  points: Point[];
-};
-
-type Props = {
-  width?: number | "100%";
-  height?: number;
-  initialTheme?: "light" | "dark";
-  penWidth?: number;
-  eraserWidth?: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  socket?: any;
-  socketEventName?: string;
-  roomId?: string;
-};
+import { Point, Stroke, DrawBoardProps } from "../../../types/app/Game/game";
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -31,7 +11,7 @@ export default function DrawBoard({
   socket,
   socketEventName = "stroke",
   roomId,
-}: Props) {
+}: DrawBoardProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
