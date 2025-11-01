@@ -363,7 +363,13 @@ const GamePage: React.FC = () => {
           <Toggle toggleMode={toggleMode} setToggleMode={setToggleMode} />
         )}
         <div className="py-4">
-          {toggleMode === "draw" ? <DrawBoard /> : null}
+          {toggleMode === "draw" ? (
+            <DrawBoard
+              socket={socket}
+              socketEventName="drawing"
+              roomId={roomId as string}
+            />
+          ) : null}
         </div>
 
         {/* MAIN CONTENT */}

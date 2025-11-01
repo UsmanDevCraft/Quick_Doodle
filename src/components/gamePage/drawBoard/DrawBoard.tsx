@@ -52,28 +52,25 @@ export default function DrawBoard({
   // Socket listeners
   useEffect(() => {
     if (!socket) return;
-    const handler = (payload: Stroke & { roomId?: string }) => {
-      if (roomId && payload.roomId && payload.roomId !== roomId) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handler = (incoming: any) => {
+      const stroke: Stroke | undefined = incoming?.points
+        ? incoming
+        : incoming?.data;
+
+      if (!stroke?.points) return; // <-- 💥 prevents crash
+
       setStrokes((prev) => {
-        if (prev.find((s) => s.id === payload.id)) return prev;
-        const s: Stroke = {
-          id: payload.id,
-          color: payload.color,
-          width: payload.width,
-          mode: payload.mode,
-          points: payload.points,
-        };
-        drawStroke(s);
-        return [...prev, s];
+        if (prev.some((s) => s.id === stroke.id)) return prev;
+        drawStroke(stroke);
+        return [...prev, stroke];
       });
     };
 
-    socket.on(socketEventName, handler);
-    return () => {
-      socket.off(socketEventName, handler);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, socketEventName, roomId]);
+    socket.on("drawing", handler);
+    return () => socket.off("drawing", handler);
+  }, [socket, roomId]);
 
   // Utility: convert client coords to normalized coords
   function toNormalized(x: number, y: number) {
