@@ -3,10 +3,23 @@ import Button from "../Button/Button";
 export default function Toggle({
   setToggleMode,
   toggleMode,
+  socket,
+  roomId,
 }: {
   setToggleMode: (mode: "riddle" | "draw") => void;
   toggleMode: "riddle" | "draw";
+  socket: any;
+  roomId: string;
 }) {
+  const handleToggle = (mode: "riddle" | "draw") => {
+    setToggleMode(mode);
+
+    socket.emit("toggleModeChanged", {
+      roomId,
+      mode,
+    });
+  };
+
   return (
     <div className="w-full flex items-center justify-center p-4">
       <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-full p-2 flex gap-2">
@@ -17,29 +30,27 @@ export default function Toggle({
         />
 
         <Button
-          onClick={() => setToggleMode("riddle")}
-          isOnlyClassName={true}
+          onClick={() => handleToggle("riddle")}
+          isOnlyClassName
           className={`relative z-10 px-8 py-3 rounded-full font-semibold text-lg transition-all duration-300 w-auto cursor-pointer ${
             toggleMode === "riddle"
               ? "text-white"
               : "text-gray-400 hover:text-gray-200"
           }`}
-          icon="🧩"
         >
-          Riddle
+          🧩 Riddle
         </Button>
 
         <Button
-          onClick={() => setToggleMode("draw")}
-          isOnlyClassName={true}
+          onClick={() => handleToggle("draw")}
+          isOnlyClassName
           className={`relative z-10 px-8 py-3 rounded-full font-semibold text-lg transition-all duration-300 w-auto cursor-pointer ${
             toggleMode === "draw"
               ? "text-white"
               : "text-gray-400 hover:text-gray-200"
           }`}
-          icon="🎨"
         >
-          Draw
+          🎨 Draw
         </Button>
       </div>
     </div>

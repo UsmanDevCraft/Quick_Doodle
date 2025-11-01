@@ -180,6 +180,20 @@ const GamePage: React.FC = () => {
     };
   }, [socket, roomId, username]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handler = ({ mode }: { mode: "riddle" | "draw" }) => {
+      setToggleMode(mode);
+    };
+
+    socket.on("toggleModeChanged", handler);
+
+    return () => {
+      socket.off("toggleModeChanged", handler);
+    };
+  }, [socket]);
+
   // === RECONNECT HANDLER (ONLY ON CONNECT) ===
   useEffect(() => {
     if (!socket || !roomId || !username || username === "Guest") return;
@@ -360,7 +374,12 @@ const GamePage: React.FC = () => {
 
         {/* GAME CONTENT */}
         {isRiddler && (
-          <Toggle toggleMode={toggleMode} setToggleMode={setToggleMode} />
+          <Toggle
+            toggleMode={toggleMode}
+            setToggleMode={setToggleMode}
+            socket={socket}
+            roomId={roomId as string}
+          />
         )}
         <div className="py-4">
           {toggleMode === "draw" ? (
