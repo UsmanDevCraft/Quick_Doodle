@@ -9,7 +9,6 @@ export default function DrawBoard({
   penWidth = 4,
   eraserWidth = 20,
   socket,
-  socketEventName = "stroke",
   roomId,
   isRiddler,
 }: DrawBoardProps) {
@@ -56,11 +55,9 @@ export default function DrawBoard({
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = (incoming: any) => {
-      const stroke: Stroke | undefined = incoming?.points
-        ? incoming
-        : incoming?.data;
+      const stroke: Stroke = incoming.data ?? incoming; // support both shapes
 
-      if (!stroke?.points) return;
+      if (!stroke || !stroke.points) return;
 
       setStrokes((prev) => {
         if (prev.some((s) => s.id === stroke.id)) return prev;
@@ -113,8 +110,7 @@ export default function DrawBoard({
     if (!cur) return;
     setStrokes((prev) => [...prev, cur]);
     if (socket) {
-      const payload = { ...cur, roomId };
-      socket.emit(socketEventName, payload);
+      socket.emit("drawing", { roomId, data: cur });
     }
     currentStrokeRef.current = null;
     setIsDrawing(false);
