@@ -53,11 +53,28 @@ export default function DrawBoard({
   useEffect(() => {
     if (!socket) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = (incoming: any) => {
-      const stroke: Stroke = incoming.data ?? incoming; // support both shapes
+      const payload = incoming.data ?? incoming; // support { data: ... } or { action: ... }
 
-      if (!stroke || !stroke.points) return;
+      // === HANDLE UNDO / CLEAR ===
+      if (payload.action === "undo") {
+        setStrokes((prev) => (prev.length > 0 ? prev.slice(0, -1) : prev));
+        return;
+      }
+      if (payload.action === "clear") {
+        setStrokes([]);
+        const ctx = ctxRef.current;
+        const canvas = canvasRef.current;
+        if (ctx && canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          redrawAll();
+        }
+        return;
+      }
+
+      // === HANDLE STROKE ===
+      const stroke: Stroke = payload;
+      if (!stroke?.points) return;
 
       setStrokes((prev) => {
         if (prev.some((s) => s.id === stroke.id)) return prev;
@@ -229,15 +246,20 @@ export default function DrawBoard({
 
   function undo() {
     setStrokes((prev) => prev.slice(0, -1));
+    socket?.emit("drawing", { roomId, action: "undo" });
   }
 
   function clearBoard() {
     setStrokes([]);
+    if (socket) {
+      socket.emit("drawing", { roomId, action: "clear" });
+    }
     const ctx = ctxRef.current!;
-    if (!ctx) return;
-    const canvas = canvasRef.current!;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    redrawAll();
+    if (ctx) {
+      const canvas = canvasRef.current!;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      redrawAll();
+    }
   }
 
   function toggleTheme() {
