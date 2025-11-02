@@ -87,4 +87,5 @@ export type DrawBoardProps = {
   socket?: any;
   socketEventName?: string;
   roomId?: string;
+  isRiddler: boolean;
 };

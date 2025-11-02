@@ -387,6 +387,7 @@ const GamePage: React.FC = () => {
               socket={socket}
               socketEventName="drawing"
               roomId={roomId as string}
+              isRiddler={isRiddler}
             />
           ) : null}
         </div>

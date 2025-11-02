@@ -11,6 +11,7 @@ export default function DrawBoard({
   socket,
   socketEventName = "stroke",
   roomId,
+  isRiddler,
 }: DrawBoardProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -251,45 +252,49 @@ export default function DrawBoard({
     <div className="w-full" ref={containerRef}>
       {/* Control Buttons */}
       <div className="flex items-center gap-2 mb-4 flex-wrap">
-        {/* Pen Button */}
-        <button
-          className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
-            mode === "draw"
-              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
-              : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
-          }`}
-          onClick={() => setMode("draw")}
-        >
-          ✏️ Pen
-        </button>
+        {isRiddler && (
+          <>
+            {/* Pen Button */}
+            <button
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
+                mode === "draw"
+                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                  : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
+              }`}
+              onClick={() => setMode("draw")}
+            >
+              ✏️ Pen
+            </button>
 
-        {/* Eraser Button */}
-        <button
-          className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
-            mode === "erase"
-              ? "bg-gradient-to-r from-orange-500 to-pink-600 text-white shadow-lg"
-              : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
-          }`}
-          onClick={() => setMode("erase")}
-        >
-          🧹 Eraser
-        </button>
+            {/* Eraser Button */}
+            <button
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
+                mode === "erase"
+                  ? "bg-gradient-to-r from-orange-500 to-pink-600 text-white shadow-lg"
+                  : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
+              }`}
+              onClick={() => setMode("erase")}
+            >
+              🧹 Eraser
+            </button>
 
-        {/* Undo Button */}
-        <button
-          className="px-4 py-2 rounded-lg font-semibold bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20 transition-all duration-200 cursor-pointer"
-          onClick={undo}
-        >
-          ↶ Undo
-        </button>
+            {/* Undo Button */}
+            <button
+              className="px-4 py-2 rounded-lg font-semibold bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20 transition-all duration-200 cursor-pointer"
+              onClick={undo}
+            >
+              ↶ Undo
+            </button>
 
-        {/* Clear Button */}
-        <button
-          className="px-4 py-2 rounded-lg font-semibold bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20 transition-all duration-200 cursor-pointer"
-          onClick={clearBoard}
-        >
-          🗑️ Clear
-        </button>
+            {/* Clear Button */}
+            <button
+              className="px-4 py-2 rounded-lg font-semibold bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20 transition-all duration-200 cursor-pointer"
+              onClick={clearBoard}
+            >
+              🗑️ Clear
+            </button>
+          </>
+        )}
 
         {/* Theme Toggle */}
         <button
