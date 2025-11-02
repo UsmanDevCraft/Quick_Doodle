@@ -1,16 +1,12 @@
 import Button from "../Button/Button";
+import { ToggleProps } from "../../types/app/Toggle/toggle";
 
 export default function Toggle({
   setToggleMode,
   toggleMode,
   socket,
   roomId,
-}: {
-  setToggleMode: (mode: "riddle" | "draw") => void;
-  toggleMode: "riddle" | "draw";
-  socket: any;
-  roomId: string;
-}) {
+}: ToggleProps) {
   const handleToggle = (mode: "riddle" | "draw") => {
     setToggleMode(mode);
 
