@@ -1,8 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 QuickDoodle — Frontend
 
-## Getting Started
+QuickDoodle is a fast, fun and modern **real-time drawing & guessing web game** inspired by Skribbl.io.
+Draw on a shared canvas, guess words, compete in **private rooms or global rooms**, and enjoy themed prompts and creative rounds.
 
-First, run the development server:
+🧠 *Future Plans:* AI agent bots that can guess drawings and allow solo mode.
+
+---
+
+## ✨ Features (Frontend)
+
+* ⚡ Built with **Next.js + TypeScript**
+* 🎮 Real-time drawing & guessing using **Socket.IO Client**
+* 🖌️ Interactive HTML canvas with smooth pens & eraser tools
+* 🌐 Private rooms or **global public rooms**
+* 🧩 Word prompts & theme-based drawing rounds
+* 🧭 Modern UI + responsive layout
+* 🔥 Powered by **Turbopack** (Next.js dev bundler) for super-fast development reloads
+
+---
+
+## 🛠️ Tech Stack
+
+| Category       | Tools Used                      |
+| -------------- | ------------------------------- |
+| Framework      | Next.js (App Router)            |
+| Language       | TypeScript                      |
+| Real-time Sync | Socket.IO Client                |
+| Styling / UI   | Tailwind CSS, custom components |
+| Dev Bundler    | Turbopack (Next.js)             |
+
+---
+
+## 📦 Installation & Running Locally
+
+1. Install dependencies:
+
+```bash
+npm install
+# or
+yarn
+# or
+pnpm install
+# or
+bun install
+```
+
+2. Run development server:
 
 ```bash
 npm run dev
@@ -14,23 +57,84 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Open your browser & navigate to:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+👉 [http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app auto-reloads on file changes thanks to **Next.js + Turbopack**.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+/src
+├── app                     # Next.js App Router
+│   ├── game                # Page route: /game/[roomid]
+│   ├── globals.css
+│   ├── layout.tsx          # Root layout
+│   ├── not-found.tsx       # 404 handler
+│   └── page.tsx            # Landing page
+│
+├── components              # Reusable UI components
+│   ├── Alert
+│   ├── Button
+│   ├── Loader
+│   ├── Modal
+│   ├── Toggle
+│   ├── Tooltip
+│   └── gamePage            # Game-specific UI
+│
+├── context                 # React context providers (Theme, Game state... soon)
+│
+├── hooks
+│   └── useSocket.ts        # Custom Socket.IO hook (frontend)
+│
+├── lib
+│   └── socket.ts           # Socket instance + config
+│
+├── types                   # TypeScript types
+│   ├── app
+│   │   ├── Alert
+│   │   ├── Button
+│   │   ├── Game
+│   │   ├── Modal
+│   │   ├── Toggle
+│   │   └── Tooltip
+│   └── auth
+│
+└── views                   # Page-level view components
+    ├── app
+    │   ├── GamePage
+    │   └── LandingPage
+    └── auth
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🌍 Backend Repository
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> The backend (Node.js + Socket.IO + MongoDB) handles room logic, game state & events.
+
+🔗 *[Backend repo link](https://github.com/UsmanDevCraft/quick_doodle_backend)*
+
+---
+
+## 🤝 Contributions
+
+Feel free to open issues or PRs — suggestions and improvements are welcome!
+
+---
+
+## 🧠 Future Enhancements (Planned)
+
+* AI guessing bot
+* Solo mode with AI interaction
+* Save past rounds / game history
+
+---
+
+### ⭐ If you like the project, give the repo a star 🥹!
+
+---
