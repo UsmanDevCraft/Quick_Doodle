@@ -59,7 +59,7 @@ export default function DrawBoard({
         ? incoming
         : incoming?.data;
 
-      if (!stroke?.points) return; // <-- 💥 prevents crash
+      if (!stroke?.points) return;
 
       setStrokes((prev) => {
         if (prev.some((s) => s.id === stroke.id)) return prev;
@@ -127,7 +127,6 @@ export default function DrawBoard({
     if (pts.length === 0) return;
     ctx.save();
     if (stroke.mode === "erase") {
-      // real eraser
       ctx.globalCompositeOperation = "destination-out";
     } else {
       ctx.globalCompositeOperation = "source-over";
@@ -138,7 +137,8 @@ export default function DrawBoard({
     for (let i = 1; i < pts.length; i++) {
       ctx.lineTo(pts[i].x, pts[i].y);
     }
-    ctx.strokeStyle = stroke.color;
+    // Use current theme color instead of saved color for dynamic theme switching
+    ctx.strokeStyle = theme === "light" ? "#000000" : "#FFFFFF";
     ctx.stroke();
     ctx.restore();
   }
@@ -158,7 +158,8 @@ export default function DrawBoard({
     ctx.beginPath();
     ctx.moveTo(lastTwo[0].x, lastTwo[0].y);
     ctx.lineTo(lastTwo[1].x, lastTwo[1].y);
-    ctx.strokeStyle = stroke.color;
+    // Use current theme color
+    ctx.strokeStyle = theme === "light" ? "#000000" : "#FFFFFF";
     ctx.stroke();
     ctx.restore();
   }
@@ -167,9 +168,8 @@ export default function DrawBoard({
     const canvas = canvasRef.current!;
     const ctx = ctxRef.current!;
     if (!canvas || !ctx) return;
-    // clear
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // draw background according to theme
+
     if (theme === "light") {
       ctx.save();
       ctx.globalCompositeOperation = "destination-over";
@@ -184,7 +184,6 @@ export default function DrawBoard({
       ctx.restore();
     }
 
-    // draw each stroke
     for (const s of strokes) drawStroke(s);
   }
 
@@ -231,12 +230,8 @@ export default function DrawBoard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDrawing, mode, penWidth, eraserWidth, theme]);
 
-  // Controls: undo, clear, theme toggle, mode toggle
   function undo() {
-    setStrokes((prev) => {
-      const next = prev.slice(0, -1);
-      return next;
-    });
+    setStrokes((prev) => prev.slice(0, -1));
   }
 
   function clearBoard() {
@@ -254,40 +249,64 @@ export default function DrawBoard({
 
   return (
     <div className="w-full" ref={containerRef}>
-      <div className="flex items-center gap-2 mb-2">
+      {/* Control Buttons */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        {/* Pen Button */}
         <button
-          className="px-3 py-1 rounded-lg border"
+          className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
+            mode === "draw"
+              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+              : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
+          }`}
           onClick={() => setMode("draw")}
-          aria-pressed={mode === "draw"}
         >
-          Pen
+          ✏️ Pen
         </button>
+
+        {/* Eraser Button */}
         <button
-          className="px-3 py-1 rounded-lg border"
+          className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer ${
+            mode === "erase"
+              ? "bg-gradient-to-r from-orange-500 to-pink-600 text-white shadow-lg"
+              : "bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20"
+          }`}
           onClick={() => setMode("erase")}
-          aria-pressed={mode === "erase"}
         >
-          Eraser
+          🧹 Eraser
         </button>
-        <button className="px-3 py-1 rounded-lg border" onClick={undo}>
-          Undo
-        </button>
-        <button className="px-3 py-1 rounded-lg border" onClick={clearBoard}>
-          Clear
-        </button>
+
+        {/* Undo Button */}
         <button
-          className="px-3 py-1 rounded-lg border ml-auto"
+          className="px-4 py-2 rounded-lg font-semibold bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20 transition-all duration-200 cursor-pointer"
+          onClick={undo}
+        >
+          ↶ Undo
+        </button>
+
+        {/* Clear Button */}
+        <button
+          className="px-4 py-2 rounded-lg font-semibold bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20 transition-all duration-200 cursor-pointer"
+          onClick={clearBoard}
+        >
+          🗑️ Clear
+        </button>
+
+        {/* Theme Toggle */}
+        <button
+          className="px-4 py-2 rounded-lg font-semibold bg-white/10 text-gray-300 border border-white/20 hover:bg-white/20 transition-all duration-200 ml-auto cursor-pointer"
           onClick={toggleTheme}
         >
-          Theme: {theme}
+          {theme === "light" ? "🌙 Dark" : "☀️ Light"}
         </button>
-        <div className="ml-2 text-sm opacity-70">Mode: {mode}</div>
       </div>
 
+      {/* Canvas Container */}
       <div
         style={{ height }}
-        className={`rounded-lg border overflow-hidden relative ${
-          theme === "light" ? "bg-white" : "bg-[#0b1220]"
+        className={`rounded-lg border-2 overflow-hidden relative shadow-2xl ${
+          theme === "light"
+            ? "bg-white border-gray-300"
+            : "bg-[#0b1220] border-white/20"
         }`}
       >
         <canvas
