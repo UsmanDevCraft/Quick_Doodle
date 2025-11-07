@@ -16,7 +16,7 @@ const GameLandingPage: React.FC = () => {
   const router = useRouter();
   const { username, setUsername, setIsHost } = useUserStore();
   const storedUsername = username;
-  const [isValid, setIsValid] = useState(storedUsername.length >= 4);
+  const isValid = username.length >= 4;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
@@ -45,7 +45,6 @@ const GameLandingPage: React.FC = () => {
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
     setUsername(value);
-    setIsValid(value.length >= 4 && value.length <= 20);
   };
 
   const handleCreateModalSubmit = (mode: "private" | "global") => {
