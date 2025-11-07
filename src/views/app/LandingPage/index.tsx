@@ -10,12 +10,12 @@ import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 import socket from "@/lib/socket";
 import Loader from "@/components/Loader/Loader";
+import { useUserStore } from "@/store/app/userData";
 
 const GameLandingPage: React.FC = () => {
   const router = useRouter();
-  const storedUsername =
-    typeof window !== "undefined" ? localStorage.getItem("username") || "" : "";
-  const [username, setUsername] = useState(storedUsername);
+  const { username, setUsername, setIsHost } = useUserStore();
+  const storedUsername = username;
   const [isValid, setIsValid] = useState(storedUsername.length >= 4);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -46,9 +46,6 @@ const GameLandingPage: React.FC = () => {
     const value = e.target.value.trim();
     setUsername(value);
     setIsValid(value.length >= 4 && value.length <= 20);
-    setTimeout(() => {
-      localStorage.setItem("username", value);
-    }, 500);
   };
 
   const handleCreateModalSubmit = (mode: "private" | "global") => {
@@ -59,8 +56,8 @@ const GameLandingPage: React.FC = () => {
       return;
     }
 
-    localStorage.setItem("username", name);
-    localStorage.setItem("isHost", "true");
+    setUsername(name);
+    setIsHost(true);
 
     const roomId = nanoid(6);
     if (!socket.connected) socket.connect();
@@ -104,7 +101,7 @@ const GameLandingPage: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.emit("joinGlobalRoom", { username }, (res: any) => {
       if (!storedUsername) {
-        localStorage.setItem("username", username);
+        setUsername(username);
       }
       if (!res.success) {
         showAlert(res.message || "Failed to join global room.", "error");
