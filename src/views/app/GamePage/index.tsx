@@ -20,27 +20,20 @@ import PlayerList from "@/components/gamePage/playerList/PlayerList";
 import ChatBox from "@/components/gamePage/chatBox/ChatBox";
 import Toggle from "@/components/Toggle/Toggle";
 import DrawBoard from "@/components/gamePage/drawBoard/DrawBoard";
+import { useUserStore } from "@/store/app/userData";
 
 const GamePage: React.FC = () => {
   const params = useParams();
   const roomId = params?.roomId;
   const router = useRouter();
-
-  const storedUsername =
-    typeof window !== "undefined" ? localStorage.getItem("username") : null;
-  const isHost =
-    typeof window !== "undefined"
-      ? localStorage.getItem("isHost") === "true"
-      : false;
+  const {
+    username: storedUsername,
+    setUsername,
+    setIsHost,
+    isHost,
+  } = useUserStore();
 
   const username = storedUsername || "";
-
-  // Ensure localStorage is updated with the latest username
-  useEffect(() => {
-    if (username && username !== storedUsername) {
-      localStorage.setItem("username", username);
-    }
-  }, [username, storedUsername]);
 
   const socket = useSocket(roomId as string | undefined, username);
 
@@ -265,11 +258,10 @@ const GamePage: React.FC = () => {
       return;
     }
 
-    localStorage.setItem("username", trimmed);
-    localStorage.setItem("isHost", "false");
+    setUsername(trimmed);
+    setIsHost(false);
 
     setIsModalOpen(false);
-    setUserName(trimmed);
 
     socket.emit(
       "checkRoom",
