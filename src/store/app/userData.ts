@@ -4,11 +4,11 @@ import { persist } from "zustand/middleware";
 interface UserStore {
   username: string;
   isHost: boolean;
-  riddleMode: string;
+  riddleMode: "riddle" | "draw";
 
   setUsername: (username: string) => void;
   setIsHost: (value: boolean) => void;
-  setRiddleMode: (mode: string) => void;
+  setRiddleMode: (mode: "riddle" | "draw") => void;
   resetUser: () => void;
 }
 
@@ -21,7 +21,7 @@ export const useUserStore = create<UserStore>()(
 
       setUsername: (username) => set({ username }),
       setIsHost: (value) => set({ isHost: value }),
-      setRiddleMode: (mode) => set({ riddleMode: mode }),
+      setRiddleMode: (mode: "riddle" | "draw") => set({ riddleMode: mode }),
 
       resetUser: () => set({ username: "", isHost: false }),
     }),
@@ -30,6 +30,7 @@ export const useUserStore = create<UserStore>()(
       partialize: (state) => ({
         username: state.username,
         isHost: state.isHost,
+        riddleMode: state.riddleMode,
       }),
     }
   )
