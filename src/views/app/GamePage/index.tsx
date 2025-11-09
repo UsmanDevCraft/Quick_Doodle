@@ -26,12 +26,13 @@ const GamePage: React.FC = () => {
   const params = useParams();
   const roomId = params?.roomId;
   const router = useRouter();
-  const {
-    username: storedUsername,
-    setUsername,
-    setIsHost,
-    isHost,
-  } = useUserStore();
+
+  const storedUsername = useUserStore((state) => state.username);
+  const riddleMode = useUserStore((state) => state.riddleMode);
+  const isHost = useUserStore((state) => state.isHost);
+  const setUsername = useUserStore((state) => state.setUsername);
+  const setRiddleMode = useUserStore((state) => state.setRiddleMode);
+  const setIsHost = useUserStore((state) => state.setIsHost);
 
   const username = storedUsername || "";
 
@@ -77,6 +78,10 @@ const GamePage: React.FC = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const listenersAttached = useRef(false);
+
+  useEffect(() => {
+    setToggleMode(riddleMode);
+  }, [riddleMode]);
 
   // Auto-scroll to bottom when messages update
   useEffect(() => {
@@ -178,6 +183,7 @@ const GamePage: React.FC = () => {
 
     const handler = ({ mode }: { mode: "riddle" | "draw" }) => {
       setToggleMode(mode);
+      setRiddleMode(mode);
     };
 
     socket.on("toggleModeChanged", handler);
@@ -185,7 +191,7 @@ const GamePage: React.FC = () => {
     return () => {
       socket.off("toggleModeChanged", handler);
     };
-  }, [socket]);
+  }, [socket, setRiddleMode]);
 
   // === RECONNECT HANDLER (ONLY ON CONNECT) ===
   useEffect(() => {
@@ -369,6 +375,7 @@ const GamePage: React.FC = () => {
           <Toggle
             toggleMode={toggleMode}
             setToggleMode={setToggleMode}
+            setRiddleMode={setRiddleMode}
             socket={socket}
             roomId={roomId as string}
           />

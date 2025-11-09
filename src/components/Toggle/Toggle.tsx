@@ -6,9 +6,11 @@ export default function Toggle({
   toggleMode,
   socket,
   roomId,
+  setRiddleMode,
 }: ToggleProps) {
   const handleToggle = (mode: "riddle" | "draw") => {
     setToggleMode(mode);
+    setRiddleMode(mode);
 
     socket.emit("toggleModeChanged", {
       roomId,
