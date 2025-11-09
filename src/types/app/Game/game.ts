@@ -56,6 +56,12 @@ export interface ChatBoxProps {
   handleChatSubmit: () => void;
 }
 
+export interface RiddleBoxProps {
+  guess: string;
+  setGuess: (msg: string) => void;
+  handleGuessSubmit: () => void;
+}
+
 export interface PlayerListProps {
   players: Player[];
   username: string;

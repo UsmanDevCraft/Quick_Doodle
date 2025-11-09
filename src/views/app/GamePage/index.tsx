@@ -12,7 +12,6 @@ import {
   NewRoundData,
   JoinRoomResponse,
 } from "@/types/app/Game/game";
-import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal/Modal";
 import Alert from "@/components/Alert/Alert";
 import { useRouter } from "next/navigation";
@@ -21,6 +20,7 @@ import ChatBox from "@/components/gamePage/chatBox/ChatBox";
 import Toggle from "@/components/Toggle/Toggle";
 import DrawBoard from "@/components/gamePage/drawBoard/DrawBoard";
 import { useUserStore } from "@/store/app/userData";
+import RiddleBox from "@/components/gamePage/riddleBox/RiddleBox";
 
 const GamePage: React.FC = () => {
   const params = useParams();
@@ -411,28 +411,14 @@ const GamePage: React.FC = () => {
 
         {/* GUESS INPUT */}
         {riddlerName && !isRiddler ? (
-          <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/20 rounded-xl p-4">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                value={guess}
-                onChange={(e) => setGuess(e.target.value)}
-                placeholder="Type your guess..."
-                className="flex-1 bg-white/10 border border-white/20 rounded-lg px-6 py-4 text-white text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <Button
-                onClick={handleGuessSubmit}
-                variant="accent"
-                className="sm:w-auto w-full text-lg py-4"
-                disabled={!guess.trim()}
-              >
-                Submit Guess
-              </Button>
-            </div>
-          </div>
+          <RiddleBox
+            guess={guess}
+            setGuess={setGuess}
+            handleGuessSubmit={handleGuessSubmit}
+          />
         ) : (
           <div className="text-center text-gray-400 italic">
-            You are the riddler this round. Give hints in the chat
+            You are the riddler this round. Give hints in the chat 😉
           </div>
         )}
       </div>
