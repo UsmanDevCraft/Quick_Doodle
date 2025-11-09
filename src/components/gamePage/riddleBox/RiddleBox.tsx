@@ -14,6 +14,12 @@ const RiddleBox: React.FC<RiddleBoxProps> = ({
           type="text"
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleGuessSubmit();
+            }
+          }}
           placeholder="Type your guess..."
           className="flex-1 bg-white/10 border border-white/20 rounded-lg px-6 py-4 text-white text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
