@@ -53,6 +53,7 @@ export default function DrawBoard({
   useEffect(() => {
     if (!socket) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = (incoming: any) => {
       const payload = incoming.data ?? incoming; // support { data: ... } or { action: ... }
 
@@ -85,6 +86,7 @@ export default function DrawBoard({
 
     socket.on("drawing", handler);
     return () => socket.off("drawing", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, roomId]);
 
   // Utility: convert client coords to normalized coords
