@@ -11,9 +11,11 @@ import { nanoid } from "nanoid";
 import socket from "@/lib/socket";
 import Loader from "@/components/Loader/Loader";
 import { useUserStore } from "@/store/app/userData";
+import { useCreateRoom } from "@/hooks/rooms/useCreateRoom";
 
 const GameLandingPage: React.FC = () => {
   const router = useRouter();
+  const { mutateAsync: createRoom } = useCreateRoom();
   const { username, setUsername, setIsHost } = useUserStore();
   const storedUsername = username;
   const isValid = username.length >= 4;
@@ -47,7 +49,7 @@ const GameLandingPage: React.FC = () => {
     setUsername(value);
   };
 
-  const handleCreateModalSubmit = (mode: "private" | "global") => {
+  const handleCreateModalSubmit = async (mode: "private" | "global") => {
     const name = username.trim();
 
     if (!name || name.length < 4) {
@@ -61,15 +63,19 @@ const GameLandingPage: React.FC = () => {
     const roomId = nanoid(6);
     if (!socket.connected) socket.connect();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    socket.emit("createRoom", { roomId, username: name, mode }, (res: any) => {
-      if (res && res.success) {
-        setIsShowLoader(true);
-        router.push(`/game/${roomId}`);
-      } else {
-        showAlert("Could not create room. Please try again.", "error");
-      }
-    });
+    try {
+      setIsShowLoader(true);
+
+      await createRoom({
+        roomId,
+        username: name,
+        mode,
+      });
+    } catch (err) {
+      console.error(err);
+      showAlert("Could not create room. Please try again.", "error");
+      setIsShowLoader(false);
+    }
   };
 
   const handleCreateRoom = () => {
