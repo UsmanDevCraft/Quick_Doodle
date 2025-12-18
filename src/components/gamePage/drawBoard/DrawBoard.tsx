@@ -104,6 +104,8 @@ export default function DrawBoard({
 
   // Begin a stroke
   function startStroke(clientX: number, clientY: number) {
+    if (!isRiddler) return;
+
     const norm = toNormalized(clientX, clientY);
     const stroke: Stroke = {
       id: uid(),
@@ -117,6 +119,8 @@ export default function DrawBoard({
   }
 
   function pushPoint(clientX: number, clientY: number) {
+    if (!isRiddler) return;
+
     const cur = currentStrokeRef.current;
     if (!cur) return;
     const norm = toNormalized(clientX, clientY);
@@ -125,6 +129,8 @@ export default function DrawBoard({
   }
 
   function endStroke() {
+    if (!isRiddler) return;
+
     const cur = currentStrokeRef.current;
     if (!cur) return;
     setStrokes((prev) => [...prev, cur]);
@@ -213,6 +219,8 @@ export default function DrawBoard({
   useEffect(() => {
     const canvas = canvasRef.current!;
     if (!canvas) return;
+
+    if (!isRiddler) return;
 
     const handlePointerDown = (e: PointerEvent) => {
       (e.target as Element).setPointerCapture(e.pointerId);
@@ -336,7 +344,12 @@ export default function DrawBoard({
       >
         <canvas
           ref={canvasRef}
-          style={{ touchAction: "none", display: "block" }}
+          style={{
+            touchAction: "none",
+            display: "block",
+            pointerEvents: isRiddler ? "auto" : "none",
+            cursor: isRiddler ? "crosshair" : "not-allowed",
+          }}
           className="w-full h-full"
         />
       </div>
