@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Users, Home, Globe } from "lucide-react";
+import { Users, Home, Globe, Bot } from "lucide-react";
 import Button from "@/components/Button/Button";
 import Tooltip from "@/components/Tooltip/Tooltip";
 import Modal from "@/components/Modal/Modal";
@@ -117,6 +117,10 @@ const GameLandingPage: React.FC = () => {
     });
   };
 
+  const handlePlayAgainstAI = () => {
+    if (!username) return;
+  };
+
   return (
     <>
       <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 overflow-hidden relative">
@@ -198,6 +202,26 @@ const GameLandingPage: React.FC = () => {
                 }`}
               >
                 Play Globally
+              </Button>
+            </Tooltip>
+
+            <Tooltip message="Enter a username first!" disabled={isValid}>
+              <Button
+                onClick={handlePlayAgainstAI}
+                variant="secondary"
+                icon={<Bot />}
+                disabled={
+                  !isValid ||
+                  process.env.NEXT_PUBLIC_API_URL !== "http://localhost:3000"
+                }
+                className={`bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 ${
+                  !isValid ||
+                  process.env.NEXT_PUBLIC_API_URL !== "http://localhost:3000"
+                    ? "opacity-50 cursor-not-allowed hover:opacity-50"
+                    : "opacity-100 cursor-pointer"
+                }`}
+              >
+                Play Against AI
               </Button>
             </Tooltip>
           </div>
