@@ -23,6 +23,14 @@ const GameLandingPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [isShowLoader, setIsShowLoader] = useState(false);
+  const isLocalhost =
+    typeof window !== "undefined" &&
+    window.location.origin === "http://localhost:3001" &&
+    window.location.pathname === "/" &&
+    window.location.search === "" &&
+    window.location.hash === "";
+
+  const shouldDisable = !isValid || !isLocalhost;
 
   // Alert state
   const [alert, setAlert] = useState<{
@@ -224,21 +232,19 @@ const GameLandingPage: React.FC = () => {
               message={
                 !isValid
                   ? "Enter a username first!"
-                  : "This feature is available on localhost for now 🙂"
+                  : !isLocalhost
+                  ? "This feature is available on localhost for now 🙂"
+                  : ""
               }
-              disabled={isValid}
+              disabled={!shouldDisable}
             >
               <Button
-                onClick={handlePlayAgainstAI}
+                onClick={() => !shouldDisable && handlePlayAgainstAI()}
                 variant="secondary"
                 icon={<Bot />}
-                disabled={
-                  !isValid &&
-                  process.env.NEXT_PUBLIC_API_URL !== "http://localhost:3000"
-                }
+                disabled={shouldDisable}
                 className={`bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 ${
-                  !isValid &&
-                  process.env.NEXT_PUBLIC_API_URL !== "http://localhost:3000"
+                  shouldDisable
                     ? "opacity-50 cursor-not-allowed hover:opacity-50"
                     : "opacity-100 cursor-pointer"
                 }`}
