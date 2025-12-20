@@ -117,8 +117,23 @@ const GameLandingPage: React.FC = () => {
     });
   };
 
-  const handlePlayAgainstAI = () => {
+  const handlePlayAgainstAI = async () => {
     if (!username) return;
+    const roomId = nanoid(6);
+
+    try {
+      setIsShowLoader(true);
+
+      await createRoom({
+        roomId,
+        username: username,
+        mode: "ai",
+      });
+    } catch (err) {
+      console.error(err);
+      showAlert("Could not create room. Please try again.", "error");
+      setIsShowLoader(false);
+    }
   };
 
   return (
