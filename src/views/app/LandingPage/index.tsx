@@ -220,17 +220,24 @@ const GameLandingPage: React.FC = () => {
               </Button>
             </Tooltip>
 
-            <Tooltip message="Enter a username first!" disabled={isValid}>
+            <Tooltip
+              message={
+                !isValid
+                  ? "Enter a username first!"
+                  : "This feature is available on localhost for now 🙂"
+              }
+              disabled={isValid}
+            >
               <Button
                 onClick={handlePlayAgainstAI}
                 variant="secondary"
                 icon={<Bot />}
                 disabled={
-                  !isValid ||
+                  !isValid &&
                   process.env.NEXT_PUBLIC_API_URL !== "http://localhost:3000"
                 }
                 className={`bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:via-pink-600 hover:to-purple-700 ${
-                  !isValid ||
+                  !isValid &&
                   process.env.NEXT_PUBLIC_API_URL !== "http://localhost:3000"
                     ? "opacity-50 cursor-not-allowed hover:opacity-50"
                     : "opacity-100 cursor-pointer"
