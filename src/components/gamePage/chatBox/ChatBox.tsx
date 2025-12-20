@@ -8,6 +8,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   chatMessage,
   setChatMessage,
   username,
+  aityping,
   handleChatSubmit,
 }) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,19 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           )
         )}
       </div>
+
+      {/* AI Typing Indicator */}
+      {aityping && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-600/20 border border-orange-500/30 rounded-lg backdrop-blur-sm">
+          <span className="text-2xl">🤖</span>
+          <span className="text-white font-medium">Riddler AI is typing</span>
+          <div className="flex gap-1">
+            <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce"></span>
+            <span className="w-2 h-2 bg-pink-400 rounded-full animate-bounce delay-100"></span>
+            <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-200"></span>
+          </div>
+        </div>
+      )}
 
       {/* Input + Send */}
       <div className="flex gap-2">

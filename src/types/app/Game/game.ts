@@ -54,6 +54,7 @@ export interface ChatBoxProps {
   setChatMessage: (msg: string) => void;
   username: string;
   handleChatSubmit: () => void;
+  aityping: boolean;
 }
 
 export interface RiddleBoxProps {
