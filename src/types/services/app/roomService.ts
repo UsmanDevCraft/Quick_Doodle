@@ -20,5 +20,5 @@ export interface RoomData {
 export interface CreateRoomPayload {
   roomId: string;
   username: string;
-  mode?: "global" | "private";
+  mode?: "global" | "private" | "ai";
 }

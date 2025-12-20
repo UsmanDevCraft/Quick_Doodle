@@ -73,6 +73,7 @@ const GamePage: React.FC = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [toggleMode, setToggleMode] = useState<"riddle" | "draw">("riddle");
+  const [aiTyping, setAiTyping] = useState<boolean>(false);
 
   // Ref for auto-scrolling chat
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -192,6 +193,14 @@ const GamePage: React.FC = () => {
       socket.off("toggleModeChanged", handler);
     };
   }, [socket, setRiddleMode]);
+
+  useEffect(() => {
+    socket.on("aiTyping", setAiTyping);
+
+    return () => {
+      socket.off("aiTyping");
+    };
+  }, [socket]);
 
   // === RECONNECT HANDLER (ONLY ON CONNECT) ===
   useEffect(() => {
@@ -409,6 +418,7 @@ const GamePage: React.FC = () => {
           {/* CHAT */}
           <ChatBox
             messages={messages}
+            aityping={aiTyping}
             chatMessage={chatMessage}
             setChatMessage={setChatMessage}
             username={username}
