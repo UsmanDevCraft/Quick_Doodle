@@ -85,6 +85,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           variant="primary"
           icon={<Send />}
           disabled={!chatMessage.trim() || aityping}
+          className=" disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale disabled:hover:scale-100 disabled:hover:shadow-none"
         >
           Send
         </Button>
