@@ -66,7 +66,7 @@ const GamePage: React.FC = () => {
   const [chatMessage, setChatMessage] = useState("");
   const [wordLength, setWordLength] = useState<number>(0);
   const [round, setRound] = useState<number>(1);
-  const [isModalOpen, setIsModalOpen] = useState(!storedUsername);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRiddler, setIsRiddler] = useState(false);
   const [userName, setUserName] = useState(storedUsername || "");
   const [secretWord, setSecretWord] = useState<string | null>(null);
