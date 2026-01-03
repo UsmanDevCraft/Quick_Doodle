@@ -71,6 +71,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
+              if (aityping || !chatMessage.trim()) return;
               handleChatSubmit();
             }
           }}
@@ -78,10 +79,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
         <Button
-          onClick={handleChatSubmit}
+          onClick={() => {
+            if (!aityping) handleChatSubmit();
+          }}
           variant="primary"
           icon={<Send />}
-          disabled={!chatMessage.trim()}
+          disabled={!chatMessage.trim() || aityping}
+          className=" disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale disabled:hover:scale-100 disabled:hover:shadow-none"
         >
           Send
         </Button>

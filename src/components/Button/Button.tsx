@@ -8,6 +8,7 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   className = "",
   isOnlyClassName = false,
+  disabled = false,
 }) => {
   const baseStyles =
     "w-full sm:w-80 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm";
@@ -26,7 +27,7 @@ const Button: React.FC<ButtonProps> = ({
     : `${baseStyles} ${variants[variant]} ${className}`;
 
   return (
-    <button onClick={onClick} className={combinedClassName}>
+    <button onClick={onClick} className={combinedClassName} disabled={disabled}>
       {icon && <span className="text-2xl">{icon}</span>}
       <span>{children}</span>
     </button>
