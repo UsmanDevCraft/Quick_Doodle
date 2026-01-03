@@ -6,6 +6,9 @@ interface UserStore {
   isHost: boolean;
   riddleMode: "riddle" | "draw";
 
+  hasHydrated: boolean;
+  setHasHydrated: () => void;
+
   setUsername: (username: string) => void;
   setIsHost: (value: boolean) => void;
   setRiddleMode: (mode: "riddle" | "draw") => void;
@@ -19,10 +22,12 @@ export const useUserStore = create<UserStore>()(
       isHost: false,
       riddleMode: "riddle",
 
+      hasHydrated: false,
+      setHasHydrated: () => set({ hasHydrated: true }),
+
       setUsername: (username) => set({ username }),
       setIsHost: (value) => set({ isHost: value }),
       setRiddleMode: (mode: "riddle" | "draw") => set({ riddleMode: mode }),
-
       resetUser: () => set({ username: "", isHost: false }),
     }),
     {
@@ -32,6 +37,9 @@ export const useUserStore = create<UserStore>()(
         isHost: state.isHost,
         riddleMode: state.riddleMode,
       }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated();
+      },
     }
   )
 );

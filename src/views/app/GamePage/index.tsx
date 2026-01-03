@@ -28,6 +28,7 @@ const GamePage: React.FC = () => {
   const router = useRouter();
 
   const storedUsername = useUserStore((state) => state.username);
+  const hasHydrated = useUserStore((state) => state.hasHydrated);
   const riddleMode = useUserStore((state) => state.riddleMode);
   const isHost = useUserStore((state) => state.isHost);
   const setUsername = useUserStore((state) => state.setUsername);
@@ -65,7 +66,7 @@ const GamePage: React.FC = () => {
   const [chatMessage, setChatMessage] = useState("");
   const [wordLength, setWordLength] = useState<number>(0);
   const [round, setRound] = useState<number>(1);
-  const [isModalOpen, setIsModalOpen] = useState(!storedUsername);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRiddler, setIsRiddler] = useState(false);
   const [userName, setUserName] = useState(storedUsername || "");
   const [secretWord, setSecretWord] = useState<string | null>(null);
@@ -83,6 +84,14 @@ const GamePage: React.FC = () => {
   useEffect(() => {
     setToggleMode(riddleMode);
   }, [riddleMode]);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
+
+    if (!storedUsername) {
+      router.push("/");
+    }
+  }, [storedUsername, hasHydrated, router]);
 
   // Auto-scroll to bottom when messages update
   useEffect(() => {
