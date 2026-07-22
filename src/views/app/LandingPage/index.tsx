@@ -27,6 +27,7 @@ import {
   Globe2,
   Gamepad2,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
@@ -51,7 +52,9 @@ const GameLandingPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [isShowLoader, setIsShowLoader] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -78,6 +81,24 @@ const GameLandingPage: React.FC = () => {
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
     setUsername(value);
+    if (value.length >= 4) {
+      setUsernameError("");
+    }
+  };
+
+  const handleStartPlaying = () => {
+    const trimmed = username.trim();
+    if (!trimmed || trimmed.length < 4) {
+      setUsernameError("Please enter a username (at least 4 characters)");
+      inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      inputRef.current?.focus();
+      return;
+    }
+    setUsernameError("");
+    const battleModeEl = document.getElementById("battle-mode");
+    if (battleModeEl) {
+      battleModeEl.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleCreateModalSubmit = async (mode: "private" | "global") => {
@@ -330,6 +351,7 @@ const GameLandingPage: React.FC = () => {
           >
             <div className="relative max-w-md mx-auto px-4 sm:px-0">
               <input
+                ref={inputRef}
                 type="text"
                 value={username}
                 onChange={handleUsernameChange}
@@ -339,7 +361,13 @@ const GameLandingPage: React.FC = () => {
                   text-base sm:text-lg text-white placeholder-gray-500
                   focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20
                   transition-all text-center backdrop-blur-sm
-                  ${isValid ? "border-green-500/50" : "border-white/10"}
+                  ${
+                    usernameError
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 text-red-100"
+                      : isValid
+                        ? "border-green-500/50"
+                        : "border-white/10"
+                  }
                 `}
               />
               <AnimatePresence>
@@ -355,12 +383,23 @@ const GameLandingPage: React.FC = () => {
                 )}
               </AnimatePresence>
             </div>
-            <motion.p
-              animate={{ opacity: isValid ? 0 : 1 }}
-              className="text-xs sm:text-sm text-gray-500 mt-2"
-            >
-              Username must be at least 4 characters
-            </motion.p>
+            {usernameError ? (
+              <motion.p
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs sm:text-sm text-red-400 mt-2 font-medium flex items-center justify-center gap-1.5"
+              >
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <span>{usernameError}</span>
+              </motion.p>
+            ) : (
+              <motion.p
+                animate={{ opacity: isValid ? 0 : 1 }}
+                className="text-xs sm:text-sm text-gray-500 mt-2"
+              >
+                Username must be at least 4 characters
+              </motion.p>
+            )}
           </motion.div>
 
           {/* CTA Buttons */}
@@ -371,8 +410,7 @@ const GameLandingPage: React.FC = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4"
           >
             <MagneticButton
-              onClick={handleJoinRoom}
-              disabled={!isValid}
+              onClick={handleStartPlaying}
               variant="primary"
               className="w-full sm:w-auto text-base sm:text-lg"
             >
@@ -503,7 +541,10 @@ const GameLandingPage: React.FC = () => {
       </section>
 
       {/* ═══════ GAME MODES SECTION (GLOWY CARDS) ═══════ */}
-      <section className="py-16 sm:py-24 px-4 relative overflow-hidden">
+      <section
+        id="battle-mode"
+        className="py-16 sm:py-24 px-4 relative overflow-hidden"
+      >
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/10 to-transparent" />
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal className="text-center mb-12 sm:mb-16">
@@ -611,8 +652,7 @@ const GameLandingPage: React.FC = () => {
               Join thousands of players already drawing and guessing right now.
             </p>
             <MagneticButton
-              onClick={handleJoinRoom}
-              disabled={!isValid}
+              onClick={handleStartPlaying}
               variant="gradient"
               className="text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-5"
             >
