@@ -35,6 +35,11 @@ export const metadata: Metadata = {
   authors: [{ name: "UsmanDevCraft", url: "https://github.com/UsmanDevCraft" }],
   creator: "UsmanDevCraft",
   publisher: "QuickDoodle",
+
+  verification: {
+    google: "9PbdoRzqApvTZ5ax4Vx_RVhsUe9OWlDNIfVNPKlw1ho",
+  },
+
   robots: {
     index: true,
     follow: true,
