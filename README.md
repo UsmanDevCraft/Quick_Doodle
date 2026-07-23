@@ -1,9 +1,11 @@
-# 🎨 QuickDoodle — Frontend
+# 🎨 QuickDoodle — AI-Powered Real-Time Drawing & Guessing Game
 
 QuickDoodle is a fast, fun and modern **real-time drawing & guessing web game** inspired by Skribbl.io.
 Draw on a shared canvas, guess words, compete in **private rooms or global rooms**, and enjoy themed prompts and creative rounds.
 
-🧠 *Future Plans:* AI agent bots that can guess drawings and allow solo mode.
+<img width="1653" height="855" alt="Screenshot 2026-07-23 at 10 57 53 AM" src="https://github.com/user-attachments/assets/10be6ffe-1777-4aae-ac6d-e874772fa2de" />
+
+🧠 **Built-in AI Support:** QuickDoodle includes AI-powered drawing analysis and guessing through locally hosted LLMs (such as Ollama). Running AI locally avoids cloud API costs, rate limits, RPM/RPD restrictions, latency issues, and external service dependencies while providing a more private and developer-friendly experience.
 
 ---
 
@@ -16,6 +18,8 @@ Draw on a shared canvas, guess words, compete in **private rooms or global rooms
 * 🧩 Word prompts & theme-based drawing rounds
 * 🧭 Modern UI + responsive layout
 * 🔥 Powered by **Turbopack** (Next.js dev bundler) for super-fast development reloads
+* 🤖 AI-powered drawing guessing using locally hosted LLMs (Ollama)
+* 🔒 Privacy-friendly AI processing with no cloud AI dependency
 
 ---
 
@@ -27,6 +31,7 @@ Draw on a shared canvas, guess words, compete in **private rooms or global rooms
 | Language       | TypeScript                      |
 | Real-time Sync | Socket.IO Client                |
 | Styling / UI   | Tailwind CSS, custom components |
+| AI Integration | Ollama (Local LLMs)             |
 | Dev Bundler    | Turbopack (Next.js)             |
 
 ---
@@ -121,6 +126,26 @@ The app auto-reloads on file changes thanks to **Next.js + Turbopack**.
 
 ---
 
+## 🤖 Local AI Integration
+
+QuickDoodle supports AI-powered drawing guessing through locally hosted language models using **Ollama**.
+
+### Why Local AI?
+
+Instead of relying on cloud AI providers, the AI runs directly on your machine:
+
+- No API costs
+- No RPM (Requests Per Minute) limitations
+- No RPD (Requests Per Day) limitations
+- Lower latency during gameplay
+- Better privacy and data control
+- Works without external AI subscriptions
+- Easy experimentation with different open-source models
+
+This makes QuickDoodle ideal for development, testing, personal deployments, and AI experimentation without worrying about cloud usage limits or recurring costs.
+
+---
+
 ## 🤝 Contributions
 
 Feel free to open issues or PRs — suggestions and improvements are welcome!
@@ -129,12 +154,14 @@ Feel free to open issues or PRs — suggestions and improvements are welcome!
 
 ## 🧠 Future Enhancements (Planned)
 
-* AI guessing bot
-* Solo mode with AI interaction
+* Smarter AI agents with improved drawing interpretation
+* Multiple AI personalities and difficulty levels
 * Save past rounds / game history
+* AI-vs-Human game modes
+* Custom community word packs
 
 ---
 
-### ⭐ If you like the project, give the repo a star 🥹!
+### ⭐ If you like the project, give the repo a star 🙂!
 
 ---
